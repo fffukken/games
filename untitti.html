@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>game</title>
+    <style>
+        #field {
+            /* width: 600px; */
+            align-items: center;
+        }
+
+        .card {
+            width: 80px;
+            height: 70px;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 50px;
+            margin: 8px;
+            float: center;
+        }
+
+        th,
+        td {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 30px;
+            margin: 8px;
+            float: left;
+            caret-color: white;
+        }
+    </style>
+    <!-- ランダムに次のカードを表示する機能
+カードをフィールドに配置する機能 -->
+
+
+
+</head>
+
+<body>
+    <h5>遊び方</h5>
+    <p>2人プレイです。交互に文字を配置していき、「うんこ」「うんち」「ちんこ」を作ったプレイヤーの負けです</p>
+    <p>判定は左上から読んで縦、横、斜めにNGワードが出現したら文字が赤くなります。</p>
+    <div id="field">
+        <!-- <p>クリックした回数は<span id="countDisplay">0</span></p>
+        <p>NGワードの数は<span id="countDisplay">0</span></p> -->
+        <!-- <div id="nextcard"></div>
+        <div id="boxes"></div> -->
+    </div>
+
+    <script>
+        let cards = ["う", "ち", "こ", "ん"];
+        let field = document.getElementById("field");
+        let elm = document.createElement("div");
+        let count = -1;
+        createNextWord()
+        // createTable()
+        generate_table()
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+        function createNextWord() {
+            next_card_id = getRandomInt(5)
+            if (next_card_id == 0) {
+                card_word = "う"
+            } else if (next_card_id == 1) {
+                card_word = "こ"
+            } else if (next_card_id == 2) {
+                card_word = "ち"
+            } else {
+                card_word = "ん"
+            }
+            elm.className = "card"
+            elm.innerHTML = card_word;
+            field.appendChild(elm)
+            // addCount()
+            // ngCount()
+        }
+        // function addCount() {
+        //     // クリックをカウント・表示
+        //     console.log(count)
+        //     count++;
+        //     countDisplay.innerHTML = count;
+        // };
+        // function ngCount() {
+        // console.log($("td").length);
+        // };
+        function generate_table() {
+            // https://developer.mozilla.org/ja/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
+            // body の参照を取得
+            var body = document.getElementsByTagName("body")[0];
+
+            // <table> 要素と <tbody> 要素を作成
+            tbl = document.createElement("table");
+            var tblBody = document.createElement("tbody");
+
+            // すべてのセルを作成
+            for (var i = 0; i < 6; i++) {
+                // 表の行を作成
+                var row = document.createElement("tr");
+
+                for (var j = 0; j < 6; j++) {
+                    // <td> 要素とテキストノードを作成し、テキストノードを
+                    // <td> の内容として、その <td> を表の行の末尾に追加
+                    var cell = document.createElement("td");
+                    cell.onclick = setCardwordToTable;
+                    // tbl.rows[i].cells[j].id = i + "-" + j;
+                    // tbl.rows[i].cells[j].onclick = clicked;
+                    var cellText = document.createTextNode("-");
+                    cell.appendChild(cellText);
+                    row.appendChild(cell);
+                }
+
+                // 表の本体の末尾に行を追加
+                tblBody.appendChild(row);
+            }
+
+            // <tbody> を <table> の中に追加
+            tbl.appendChild(tblBody);
+            // <table> を <body> の中に追加
+            body.appendChild(tbl);
+        }
+        function checkUnko() {
+            mybody = document.getElementsByTagName("body")[0];
+            mytable = mybody.getElementsByTagName("table")[0];
+            mytablebody = mytable.getElementsByTagName("tbody")[0];
+            for (var i = 0; i < 6; i++) {
+                myrow = mytablebody.getElementsByTagName("tr")[i];
+                for (var j = 0; j < 6; j++) {
+                    mycell = myrow.getElementsByTagName("td")[j];
+                    mycelltext = mycell.childNodes[0];
+                    currenttext = document.createTextNode(mycelltext.data);
+                    checkVertial(i, j, mytablebody)
+                    checkHorizontal(i, j, mytablebody)
+                    checkDiagonal(i, j, mytablebody)
+                }
+            }
+        }
+        function checkVertial(i, j, mytablebody) {
+            if (i !== 0 && i !== 5) {
+                var upcell = mytablebody.getElementsByTagName("tr")[i - 1].getElementsByTagName("td")[j].innerHTML
+                var currentcell = mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].innerHTML
+                var downcell = mytablebody.getElementsByTagName("tr")[i + 1].getElementsByTagName("td")[j].innerHTML
+                var word = upcell + currentcell + downcell
+                if (word === "うんこ" || word === "ちんこ" || word === "うんち") {
+                    mytablebody.getElementsByTagName("tr")[i + 1].getElementsByTagName("td")[j].style.color = "rgb(255, 0, 0)"
+                    mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j].style.color = "rgb(255, 0, 0)"
+                    mytablebody.getElementsByTagName("tr")[i - 1].getElementsByTagName("td")[j].style.color = "rgb(255, 0, 0)"
+                }
+            }
+        }
+        function checkHorizontal(i, j, mytablebody) {
+            if (j !== 0 && j !== 5) {
+                var leftcell = mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j - 1]
+                var currentcell = mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j]
+                var rightcell = mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j + 1]
+                var word = leftcell.innerHTML + currentcell.innerHTML + rightcell.innerHTML
+                if (word === "うんこ" || word === "ちんこ" || word === "うんち") {
+                    leftcell.style.color = "rgb(255, 0, 0)"
+                    currentcell.style.color = "rgb(255, 0, 0)"
+                    rightcell.style.color = "rgb(255, 0, 0)"
+                }
+            }
+        }
+        function checkDiagonal(i, j, mytablebody) {
+            if (i !== 0 && i !== 5 && j !== 0 && j !== 5) {
+                var leftupcell = mytablebody.getElementsByTagName("tr")[i - 1].getElementsByTagName("td")[j - 1]
+                var currentcell = mytablebody.getElementsByTagName("tr")[i].getElementsByTagName("td")[j]
+                var rightdowncell = mytablebody.getElementsByTagName("tr")[i + 1].getElementsByTagName("td")[j + 1]
+                var word = leftupcell.innerHTML + currentcell.innerHTML + rightdowncell.innerHTML
+                if (word === "うんこ" || word === "ちんこ" || word === "うんち") {
+                    leftupcell.style.color = "rgb(255, 0, 0)"
+                    currentcell.style.color = "rgb(255, 0, 0)"
+                    rightdowncell.style.color = "rgb(255, 0, 0)"
+                }
+            }
+        }
+        function setCardwordToTable(e) {
+            // すでに文字が入ったところには上書きできないようにする
+            if (e.target.innerHTML === "-") {
+                e.target.innerHTML = card_word
+                createNextWord()
+                checkUnko()
+            }
+        }
+    </script>
+
+</body>
+
+</html>
