@@ -29,12 +29,24 @@
 </head>
 
 <body>
-    <div id="field">
-        <input type="button" value="単語をゲット" onclick="getWords();" />
-        <input type="button" value="1文字クリア" onclick="clearWord();" /><br />
-        <input type="button" value="プレイヤーを増やす" onclick="addPlayer();" /><br />
+    <div id="field" class="container-fluid">
+        <div class="row" id="wordArea">
+            <div class="col">
+                <div id="currentWord">
+                </div>
+            </div>
+            <div class="col">
+                <input type="button" value="単語をゲット" class="btn btn-primary" onclick="getWords();" />
+                <input type="button" value="1文字クリア" class="btn btn-light" onclick="clearWord();" /><br />
+            </div>
+            <div class="col-9">
+            </div>
+        </div>
+        <div class="row" id="playerArea">
+            <input type="button" value="プレイヤー追加" class="col-2 btn btn-light" onclick="addPlayer();" /><br />
+        </div>
+
         <br />
-        <div id="currentWord"></div>
         <div>
             <p>ゲットした単語</p>
         </div>
@@ -45,6 +57,7 @@
         let words = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん"
         let wordsAry = words.split('');
         let field = document.getElementById("field");
+        let playerArea = document.getElementById("playerArea");
         let currentWord = "";
         let beforeWord = ""; //1文字削除の処理の際に、元に戻す一文字
         let gotWordsAry = [];
@@ -117,8 +130,9 @@
             let elm = document.createElement("div");
             elm.id = "player" + String(playerNo);
             elm.innerHTML = "player" + String(playerNo)
+            elm.className = "col-2"
             playerNo += 1
-            field.appendChild(elm);
+            playerArea.appendChild(elm);
             // 追加したプレイヤーの単語が入るArrayを用意
             gotWordsAry.push([])
 
