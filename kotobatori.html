@@ -41,15 +41,14 @@
             </div>
             <div class="col-9">
             </div>
-        </div>
+        </div><br />
+
         <div class="row" id="playerArea">
             <input type="button" value="プレイヤー追加" class="col-2 btn btn-light" onclick="addPlayer();" /><br />
         </div>
 
         <br />
-        <div>
-            <p>ゲットした単語</p>
-        </div>
+
     </div>
 
     <script>
@@ -127,15 +126,25 @@
             beforeCard.innerHTML = delWord
         }
         function addPlayer() {
+            // Player名と取得した文字を入れるdivを作る
             let elm = document.createElement("div");
             elm.id = "player" + String(playerNo);
             elm.innerHTML = "player" + String(playerNo)
             elm.className = "col-2"
-            playerNo += 1
             playerArea.appendChild(elm);
+
+            // player名の子要素として取得した単語を入れる   
+            let textElm = document.createElement("p")
+            textElm.id = "playerText" + String(playerNo)
+            textElm.innerHTML = "取得した単語がここに表示されます"
+            let parentDiv = document.getElementById("player" + String(playerNo))
+            console.log(parentDiv)
+            console.log("player" + String(playerNo))
+            parentDiv.appendChild(textElm)
             // 追加したプレイヤーの単語が入るArrayを用意
             gotWordsAry.push([])
 
+            playerNo += 1
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
