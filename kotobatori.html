@@ -92,14 +92,13 @@
             e.target.innerHTML = ""
             showWord = document.getElementById("currentWord");
             showWord.innerHTML = currentWord;
-            console.log("currentword", currentWord)
         }
         function getWords() {
             // 選択している単語を取得済単語リストに入れる
             showWord = document.getElementById("currentWord");
             // 手番のプレイヤーの配列に、現在表示している単語を追加し表示
             gotWordsAry[currentPlayer].push(showWord.innerHTML)
-            playerWord = document.getElementById("player" + String(currentPlayer));
+            playerWord = document.getElementById("playerText" + String(currentPlayer));
             playerWord.innerHTML = gotWordsAry[currentPlayer];
 
             // どのプレイヤーの手番かを判定。最後のプレイヤーまで行ったら最初のプレイヤーに戻る
@@ -110,6 +109,10 @@
             }
             currentWord = "";
             showWord.innerHTML = currentWord;
+
+            // 単語を取得した際、各プレイヤーの点数（＝文字数を計算する）
+            calcPoints()
+
         };
         function clearWord() {
             // 現在選択中の文字（currentWord)から末尾の1文字を削除する
@@ -133,18 +136,27 @@
             elm.className = "col-2"
             playerArea.appendChild(elm);
 
+            // player名と取得した単語に改行を加える
+            let br = document.createElement("br");
+            playerArea.appendChild(br)
+
             // player名の子要素として取得した単語を入れる   
             let textElm = document.createElement("p")
             textElm.id = "playerText" + String(playerNo)
             textElm.innerHTML = "取得した単語がここに表示されます"
             let parentDiv = document.getElementById("player" + String(playerNo))
-            console.log(parentDiv)
-            console.log("player" + String(playerNo))
             parentDiv.appendChild(textElm)
             // 追加したプレイヤーの単語が入るArrayを用意
             gotWordsAry.push([])
 
             playerNo += 1
+        }
+        function calcPoints() {
+            for (player of gotWordsAry) {
+                for (word of player) {
+                    word.length
+                }
+            }
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
