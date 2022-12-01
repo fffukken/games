@@ -60,6 +60,7 @@
         let currentWord = "";
         let beforeWord = ""; //1文字削除の処理の際に、元に戻す一文字
         let gotWordsAry = [];
+        let points = [];
         let playerNo = 0;
         let currentPlayer = 0;
         let playerFlag = 0;
@@ -101,6 +102,9 @@
             playerWord = document.getElementById("playerText" + String(currentPlayer));
             playerWord.innerHTML = gotWordsAry[currentPlayer];
 
+            // 単語を取得した際、各プレイヤーの点数（＝文字数を計算する）
+            calcPoints()
+
             // どのプレイヤーの手番かを判定。最後のプレイヤーまで行ったら最初のプレイヤーに戻る
             currentPlayer += 1;
             // currentPlayerは0を含むプレイヤーの番号で、playerNoはプレイヤーの人数なので0を含まない
@@ -110,8 +114,6 @@
             currentWord = "";
             showWord.innerHTML = currentWord;
 
-            // 単語を取得した際、各プレイヤーの点数（＝文字数を計算する）
-            calcPoints()
 
         };
         function clearWord() {
@@ -136,6 +138,16 @@
             elm.className = "col-2"
             playerArea.appendChild(elm);
 
+            // 後々使うので、Player領域のDOMを取得
+            let parentDiv = document.getElementById("player" + String(playerNo))
+
+            // player名の横に点数を表示する
+            let pointElm = document.createElement("p")
+            pointElm.id = "playerPoint" + String(playerNo)
+            pointElm.innerHTML = "点"
+            parentDiv.appendChild(pointElm)
+
+
             // player名と取得した単語に改行を加える
             let br = document.createElement("br");
             playerArea.appendChild(br)
@@ -144,7 +156,6 @@
             let textElm = document.createElement("p")
             textElm.id = "playerText" + String(playerNo)
             textElm.innerHTML = "取得した単語がここに表示されます"
-            let parentDiv = document.getElementById("player" + String(playerNo))
             parentDiv.appendChild(textElm)
             // 追加したプレイヤーの単語が入るArrayを用意
             gotWordsAry.push([])
@@ -152,11 +163,21 @@
             playerNo += 1
         }
         function calcPoints() {
+            points = []
             for (player of gotWordsAry) {
+                playerPoint = 0;
                 for (word of player) {
-                    word.length
-                }
+                    playerPoint += word.length
+                };
+                points.push(playerPoint)
             }
+            let playerPointArea = document.getElementById("playerPoint" + String(currentPlayer))
+            console.log("check", points, currentPlayer)
+
+            console.log(points[currentPlayer])
+            playerPointArea.innerHTML = points[currentPlayer]
+
+
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
