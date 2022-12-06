@@ -30,6 +30,16 @@
 
 <body>
     <div id="field" class="container-fluid">
+        <div class="row">
+            <h1>出来るだけ長い単語を作ってポイントを稼げ！</h1><br />
+            <ol>
+                <li>ゲームに参加する人数に合わせてプレイヤーを追加してください</li>
+                <li>五十音表から文字を取って、出来るだけ長い単語を作ってください</li>
+                <li>単語を作ったら、単語をゲットしてください</li>
+                <li>最終的に、ゲットした単語の文字数の合計が多いプレイヤーの勝利です</li>
+            </ol>
+        </div>
+
         <div class="row" id="wordArea">
             <div class="col">
                 <div id="currentWord">
@@ -134,7 +144,8 @@
             // Player名と取得した文字を入れるdivを作る
             let elm = document.createElement("div");
             elm.id = "player" + String(playerNo);
-            elm.innerHTML = "player" + String(playerNo)
+            // ユーザ目線ではplayer0からではなくplayer1から始める
+            elm.innerHTML = "player" + String(playerNo + 1)
             elm.className = "col-2"
             playerArea.appendChild(elm);
 
@@ -146,7 +157,6 @@
             pointElm.id = "playerPoint" + String(playerNo)
             pointElm.innerHTML = "点"
             parentDiv.appendChild(pointElm)
-
 
             // player名と取得した単語に改行を加える
             let br = document.createElement("br");
@@ -174,8 +184,7 @@
             let playerPointArea = document.getElementById("playerPoint" + String(currentPlayer))
             console.log("check", points, currentPlayer)
 
-            console.log(points[currentPlayer])
-            playerPointArea.innerHTML = points[currentPlayer]
+            playerPointArea.innerHTML = String(points[currentPlayer]) + "点"
 
 
         }
