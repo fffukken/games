@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>kotobatukuri</title>
+    <style>
+        #field {
+            width: 100%;
+            align-items: center;
+        }
+
+        .card {
+            width: 80px;
+            height: 70px;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 50px;
+            margin: 8px;
+            float: left;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="field" class="container-fluid">
+        <div class="row">
+            <h1>出来るだけ長い単語を作れ！</h1><br />
+            <ol>
+                <li>表示される10文字から出来るだけ長い単語を作ってください</li>
+                <li>単語が出来たら次の単語を表示</li>
+            </ol>
+        </div>
+
+        <div class="row" id="wordArea">
+            <div class="col-2 form-group">
+                <label for="showcharacterNos">表示する文字数</label>
+                <select class="form-control" id="showcharacterNos">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option selected>5</option>
+                    <option>10</option>
+                </select>
+            </div>
+            <div class="col">
+                <div id="currentWord">
+                </div>
+            </div>
+            <div class="col">
+                <input type="button" value="単語をゲット" class="btn btn-primary" onclick="getWords();" />
+                <input type="button" value="1文字クリア" class="btn btn-light" onclick="clearWord();" /><br />
+                <input type="button" value="新しい文字を表示" class="btn btn-light" onclick="generate_table();" /><br />
+            </div>
+            <div class="col" id="gotWords">
+            </div>
+        </div><br />
+        <div class="row" id="characterArea"></div>
+    </div>
+
+    <script>
+        // character -> 1文字
+        // word -> 1文字を組み合わせて作った単語
+        let words = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん"
+        let wordsAry = words.split('');
+        let field = document.getElementById("field");
+        let playerArea = document.getElementById("playerArea");
+        let currentWord = "";
+        let gotWordsAry = [];
+        let points = [];
+        let playerNo = 0;
+        let characterNumber = 5;
+        let currentPlayer = 0;
+        const shuffle = ([...array]) => {
+            for (let i = array.length - 1; i >= 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        // Cardの一覧を用意
+        characterNos = document.getElementById("showcharacterNos");
+        characterNos.addEventListener('change', changeCharacterNos);
+
+        generate_table()
+        // 1人目のプレイヤーを用意
+        function generate_table() {
+            // 表示する文字をランダムに並び替える
+            wordsAry = shuffle(wordsAry)
+
+            let characterArea = document.getElementById("characterArea")
+
+            // まず子要素をすべて削除する
+            while (characterArea.firstChild) {
+                console.log(characterArea.firstChild)
+                characterArea.removeChild(characterArea.firstChild);
+            }
+
+            // 初期Cardを作成
+            for (let i = 0; i < characterNumber; i++) {
+                let elm = document.createElement("div");
+                elm.innerHTML = wordsAry[i];
+                elm.className = "card";
+                elm.id = wordsAry[i];
+                elm.onclick = selectWord;
+                // field.appendChild(elm);
+                characterArea.appendChild(elm)
+            };
+        };
+        function changeCharacterNos() {
+            console.log(characterNos.value)
+            characterNumber = characterNos.value
+            console.log(characterNos.value)
+            generate_table()
+        }
+        function selectWord(e) {
+            // Cardの一覧から1文字選択して、単語の末尾に追加
+            currentWord = currentWord + e.target.innerHTML
+            e.target.innerHTML = ""
+            showWord = document.getElementById("currentWord");
+            showWord.innerHTML = currentWord;
+        }
+        function getWords() {
+            // 選択している単語を取得済単語リストに入れる
+            showWord = document.getElementById("currentWord");
+            // 手番のプレイヤーの配列に、現在表示している単語を追加し表示
+            console.log(currentPlayer, showWord, gotWordsAry)
+            gotWordsAry.push(showWord.innerHTML)
+            playerWord = document.getElementById("gotWords");
+            playerWord.innerHTML = gotWordsAry;
+
+            // 単語を取得した際、各プレイヤーの点数（＝文字数を計算する）
+            // calcPoints()
+
+            // どのプレイヤーの手番かを判定。最後のプレイヤーまで行ったら最初のプレイヤーに戻る
+            currentPlayer += 1;
+            // currentPlayerは0を含むプレイヤーの番号で、playerNoはプレイヤーの人数なので0を含まない
+            if (currentPlayer > playerNo - 1) {
+                currentPlayer = 0
+            }
+            currentWord = "";
+            showWord.innerHTML = currentWord;
+
+
+        };
+        function clearWord() {
+            // 現在選択中の文字（currentWord)から末尾の1文字を削除する
+            // 削除する際に、文字のカード一覧(cards)の削除した文字を復活させる
+
+            // 0文字の状態では何もしない
+            if (currentWord.length === 0) {
+                return
+            }
+
+            // 復活させる文字を取得
+            delWord = currentWord.slice(-1);
+            // 選択中の文字の末尾1文字を削除
+            currentWord = currentWord.slice(0, -1);
+            showWord = document.getElementById("currentWord");
+            showWord.innerHTML = currentWord;
+            // 復活させるカードの文字を、削除した1文字にする
+            beforeCard = document.getElementById(delWord)
+            beforeCard.innerHTML = delWord
+        }
+        function calcPoints() {
+            points = []
+            for (player of gotWordsAry) {
+                playerPoint = 0;
+                for (word of player) {
+                    playerPoint += word.length
+                };
+                points.push(playerPoint)
+            }
+            let playerPointArea = document.getElementById("playerPoint" + String(currentPlayer))
+            console.log("check", points, currentPlayer)
+
+            playerPointArea.innerHTML = String(points[currentPlayer]) + "点"
+
+
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
