@@ -1,10 +1,10 @@
 <html>
 
 <body>
-    <h1>simple chat</h1>
+    <h1>しりとりしましょう！</h1>
     <input id="inputText" type="text">
     <input id="sendButton" type="submit">
-    <ul id="messageList" />
+    <ol id="messageList" />
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -15,11 +15,11 @@
         }
 
         const addMessageList = (message) => {
-            const ul = document.getElementById('messageList');
+            const ol = document.getElementById('messageList');
             const li = document.createElement('li');
             const text = document.createTextNode(message);
             li.appendChild(text);
-            ul.appendChild(li);
+            ol.appendChild(li);
         }
 
         document.getElementById('sendButton').addEventListener('click', () => {
