@@ -10,7 +10,7 @@ npm install
 
 2. 以下のコマンドでサーバーを起動します。
 ```
-npm index.js
+node index.js
 ```
 
 3. localhost:3000へアクセスしてサーバーが立ち上がっていることを確認します。
