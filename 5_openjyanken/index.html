@@ -13,7 +13,6 @@
 <body>
     <h1>手札オープンじゃんけんをしましょう</h1>
     <div id="hands">
-
     </div>
     <input id="sendButton" type="submit">
     <ol id="messageList" />
@@ -21,35 +20,64 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const createHands = (i) => {
-            console.log("start creating hands")
+        const createPlayer = (p) => {
+            console.log("start creating players")
+
             // ラジオボタンの大枠を作る
             let divElm = document.createElement("div");
             divElm.className = "form-check"
+            divElm.id = "form-check" + String(p)
+
+            let pElm = document.createElement("p")
+            pElm.innerHTML = "player" + String(p)
+            divElm.appendChild(pElm)
+            bodyElm = document.getElementById("hands")
+            bodyElm.appendChild(divElm)
+        }
+
+        const createHands = (p, i) => {
+            console.log("start creating hands")
+
+            // getElementByIdとgetElementsByClassNameでは取得する戻り値の型が違う
+            // Idー＞1つの要素、classname -> 複数のElements
+            // https://www.wakuwakubank.com/posts/306-javascript-dom/
+            let divElm = document.getElementById("form-check" + String(p))
             // インプットのまるぽちを作る
             let inputElm = document.createElement("input")
             inputElm.className = "form-check-input"
             inputElm.type = "radio"
-            inputElm.name = "player1hand"
+            // inputElm.name = "player1hand"
+            // TODO: playerの作成は変数にする
+            inputElm.name = "player" + String(p) + "hand"
             inputElm.id = "flexRadioDefault" + String(i)
-            // 表示する文字を作る
-            let handslist = ["ぐー", "ちょき", "ぱー"]
 
-            inputElm.setAttribute("value", String(handslist[Math.floor(Math.random() * handslist.length)]))
+            let handslist = ["ぐー", "ちょき", "ぱー"]
+            let thisWord = String(handslist[Math.floor(Math.random() * handslist.length)])
+            // valueの項目をサーバー側へ送る
+            inputElm.setAttribute("value", thisWord)
+
+            // 表示する文字を作る
             let labelElm = document.createElement("label")
             labelElm.className = "form-check-label"
             // handslistからランダムに表示
-            labelElm.innerHTML = handslist[Math.floor(Math.random() * handslist.length)]
+            labelElm.innerHTML = thisWord
             labelElm.setAttribute("for", "flexRadioDefault" + String(i))
+
+            console.log(divElm)
+            // getElementsByClassNameとかで取得したDOM要素に直接appendChildは出来ない。
             divElm.appendChild(inputElm)
             divElm.appendChild(labelElm)
 
             bodyElm = document.getElementById("hands")
             bodyElm.appendChild(divElm)
         }
-        // プレイヤーあたり、3つの手を与える
-        for (let i = 0; i < 3; i++) {
-            createHands(i)
+
+        for (let p = 0; p < 1; p++) {
+            createPlayer(p)
+            // プレイヤーあたり、3つの手を与える
+            for (let i = 0; i < 3; i++) {
+                createHands(p, i)
+            }
         }
 
         const addMessageList = (message) => {
@@ -61,7 +89,7 @@
         }
 
         document.getElementById('sendButton').addEventListener('click', () => {
-            const player1hands = document.getElementsByName("player1hand")
+            const player1hands = document.getElementsByName("player" + String(0) + "hand")
             console.log(player1hands)
             for (let i = 0; i < player1hands.length; i++) {
                 if (player1hands[i].checked) {
