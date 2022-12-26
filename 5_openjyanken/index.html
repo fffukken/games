@@ -12,25 +12,58 @@
 
 <body>
     <h1>手札オープンじゃんけんをしましょう</h1>
-    <select id="player1-select" class="form-select" aria-label="Default select example">
-        <option selected>プレイヤー１の選択肢</option>
-        <option value="1">グー</option>
-        <option value="2">チョキ</option>
-        <option value="3">パー</option>
-    </select>
-    <select id="player2-select" class="form-select" aria-label="Default select example">
-        <option selected>プレイヤー１の選択肢</option>
-        <option value="1">チョキ</option>
-        <option value="2">チョキ</option>
-        <option value="3">パー</option>
-    </select>
+    <div id="hands">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+                Default radio
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+                Default checked radio
+            </label>
+        </div>
+        <!-- <select id="player2-select" class="form-select" aria-label="Default select example">
+            <option selected>プレイヤー１の選択肢</option>
+            <option value="1">チョキ</option>
+            <option value="2">チョキ</option>
+            <option value="3">パー</option>
+        </select> -->
+    </div>
     <input id="sendButton" type="submit">
     <ol id="messageList" />
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        const createHands = (i) => {
+            console.log("start creating hands")
+            // ラジオボタンの大枠を作る
+            let divElm = document.createElement("div");
+            divElm.className = "form-check"
+            // インプットのまるぽちを作る
+            let inputElm = document.createElement("input")
+            inputElm.className = "form-check-input"
+            inputElm.type = "radio"
+            inputElm.name = "player1hand"
+            inputElm.id = "flexRadioDefault" + String(i)
+            // 表示する文字を作る
+            let handslist = ["ぐー", "ちょき", "ぱー"]
+            let labelElm = document.createElement("label")
+            labelElm.className = "form-check-label"
+            labelElm.innerHTML = handslist[Math.floor(Math.random() * handslist.length)]
+            labelElm.setAttribute("for", "flexRadioDefault" + String(i))
+            divElm.appendChild(inputElm)
+            divElm.appendChild(labelElm)
 
+            bodyElm = document.getElementById("hands")
+            bodyElm.appendChild(divElm)
+        }
+        for (let i = 0; i < 3; i++) {
+            createHands(i)
+        }
         const clearText = () => {
             document.getElementById('player1-select').value = '';
         }
