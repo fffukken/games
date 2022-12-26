@@ -13,24 +13,7 @@
 <body>
     <h1>手札オープンじゃんけんをしましょう</h1>
     <div id="hands">
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-            <label class="form-check-label" for="flexRadioDefault1">
-                Default radio
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-            <label class="form-check-label" for="flexRadioDefault2">
-                Default checked radio
-            </label>
-        </div>
-        <!-- <select id="player2-select" class="form-select" aria-label="Default select example">
-            <option selected>プレイヤー１の選択肢</option>
-            <option value="1">チョキ</option>
-            <option value="2">チョキ</option>
-            <option value="3">パー</option>
-        </select> -->
+
     </div>
     <input id="sendButton" type="submit">
     <ol id="messageList" />
@@ -51,8 +34,11 @@
             inputElm.id = "flexRadioDefault" + String(i)
             // 表示する文字を作る
             let handslist = ["ぐー", "ちょき", "ぱー"]
+
+            inputElm.setAttribute("value", String(handslist[Math.floor(Math.random() * handslist.length)]))
             let labelElm = document.createElement("label")
             labelElm.className = "form-check-label"
+            // handslistからランダムに表示
             labelElm.innerHTML = handslist[Math.floor(Math.random() * handslist.length)]
             labelElm.setAttribute("for", "flexRadioDefault" + String(i))
             divElm.appendChild(inputElm)
@@ -61,11 +47,9 @@
             bodyElm = document.getElementById("hands")
             bodyElm.appendChild(divElm)
         }
+        // プレイヤーあたり、3つの手を与える
         for (let i = 0; i < 3; i++) {
             createHands(i)
-        }
-        const clearText = () => {
-            document.getElementById('player1-select').value = '';
         }
 
         const addMessageList = (message) => {
@@ -77,16 +61,22 @@
         }
 
         document.getElementById('sendButton').addEventListener('click', () => {
-            let player1SelectedValue = document.getElementById('player1-select').value;
-            let player2SelectedValue = document.getElementById('player2-select').value;
-            let inputMessage = { "p1": player1SelectedValue, "p2": player2SelectedValue };
-
+            const player1hands = document.getElementsByName("player1hand")
+            console.log(player1hands)
+            for (let i = 0; i < player1hands.length; i++) {
+                if (player1hands[i].checked) {
+                    console.log("sel", i, player1hands[i].value)
+                    player1Hand = player1hands.item(i).value;
+                }
+                // let player1SelectedValue = document.getElementById('player1-select').value;
+                // let player2SelectedValue = document.getElementById('player2-select').value;
+            }
+            let inputMessage = { "p1": player1Hand };
             if (inputMessage === '') {
                 return;
             }
 
             socket.emit('sendMessage', inputMessage);
-            clearText()
         });
 
         socket.on('receiveMessage', (message) => {
