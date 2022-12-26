@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>オープンじゃんけん</title>
+
+</head>
+
+<body>
+    <h1>手札オープンじゃんけんをしましょう</h1>
+    <select id="player1-select" class="form-select" aria-label="Default select example">
+        <option selected>プレイヤー１の選択肢</option>
+        <option value="1">グー</option>
+        <option value="2">チョキ</option>
+        <option value="3">パー</option>
+    </select>
+    <select id="player2-select" class="form-select" aria-label="Default select example">
+        <option selected>プレイヤー１の選択肢</option>
+        <option value="1">チョキ</option>
+        <option value="2">チョキ</option>
+        <option value="3">パー</option>
+    </select>
+    <input id="sendButton" type="submit">
+    <ol id="messageList" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const clearText = () => {
+            document.getElementById('player1-select').value = '';
+        }
+
+        const addMessageList = (message) => {
+            const ol = document.getElementById('messageList');
+            const li = document.createElement('li');
+            const text = document.createTextNode(message);
+            li.appendChild(text);
+            ol.appendChild(li);
+        }
+
+        document.getElementById('sendButton').addEventListener('click', () => {
+            let player1SelectedValue = document.getElementById('player1-select').value;
+            let player2SelectedValue = document.getElementById('player2-select').value;
+            let inputMessage = { "p1": player1SelectedValue, "p2": player2SelectedValue };
+
+            if (inputMessage === '') {
+                return;
+            }
+
+            socket.emit('sendMessage', inputMessage);
+            clearText()
+        });
+
+        socket.on('receiveMessage', (message) => {
+            addMessageList(message)
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
