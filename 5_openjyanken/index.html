@@ -23,29 +23,35 @@
         const createPlayer = (p) => {
             console.log("start creating players")
 
+            // // ラジオボタンの大枠を作る
+            // let divElm = document.createElement("div");
+            // divElm.className = "form-check"
+            // divElm.id = "form-check" + String(p)
+
+            let pElm = document.createElement("p")
+            pElm.innerHTML = "player" + String(p)
+            // divElm.appendChild(pElm)
+            bodyElm = document.getElementById("hands")
+            bodyElm.appendChild(pElm)
+        }
+
+        const createHands = (p, i) => {
+            console.log("start creating hands")
             // ラジオボタンの大枠を作る
             let divElm = document.createElement("div");
             divElm.className = "form-check"
             divElm.id = "form-check" + String(p)
 
-            let pElm = document.createElement("p")
-            pElm.innerHTML = "player" + String(p)
-            divElm.appendChild(pElm)
-            bodyElm = document.getElementById("hands")
-            bodyElm.appendChild(divElm)
-        }
-
-        const createHands = (p, i) => {
-            console.log("start creating hands")
-
             // getElementByIdとgetElementsByClassNameでは取得する戻り値の型が違う
             // Idー＞1つの要素、classname -> 複数のElements
             // https://www.wakuwakubank.com/posts/306-javascript-dom/
-            let divElm = document.getElementById("form-check" + String(p))
+            // let divElm = document.getElementById("form-check" + String(p))
+
             // インプットのまるぽちを作る
             let inputElm = document.createElement("input")
             inputElm.className = "form-check-input"
             inputElm.type = "radio"
+            if (i === 1) { inputElm.checked = true }
             // inputElm.name = "player1hand"
             // TODO: playerの作成は変数にする
             inputElm.name = "player" + String(p) + "hand"
@@ -72,7 +78,8 @@
             bodyElm.appendChild(divElm)
         }
 
-        for (let p = 0; p < 1; p++) {
+        // プレイヤーは0,1の2人
+        for (let p = 0; p < 2; p++) {
             createPlayer(p)
             // プレイヤーあたり、3つの手を与える
             for (let i = 0; i < 3; i++) {
@@ -87,25 +94,33 @@
             li.appendChild(text);
             ol.appendChild(li);
         }
-
-        document.getElementById('sendButton').addEventListener('click', () => {
-            const player1hands = document.getElementsByName("player" + String(0) + "hand")
-            console.log(player1hands)
-            for (let i = 0; i < player1hands.length; i++) {
-                if (player1hands[i].checked) {
-                    console.log("sel", i, player1hands[i].value)
-                    player1Hand = player1hands.item(i).value;
+        function getPlayerHand(playerId) {
+            // ラジオボタンは同じName属性がついたものをすべて取得
+            let playerhands = document.getElementsByName("player" + String(playerId) + "hand")
+            // 取得したラジオボタンの中からCheckが着いたものだけ取得
+            // checkがついたものをplayerhandに入れてるけど、for文の後でreturnしたいからvarで定義
+            for (let i = 0; i < playerhands.length; i++) {
+                if (playerhands[i].checked) {
+                    var playerhand = playerhands.item(i).value;
                 }
-                // let player1SelectedValue = document.getElementById('player1-select').value;
-                // let player2SelectedValue = document.getElementById('player2-select').value;
             }
-            let inputMessage = { "p1": player1Hand };
+            return playerhand
+        }
+        document.getElementById('sendButton').addEventListener('click', () => {
+            for (q = 0; q < 2; q++) {
+                var playerHand = getPlayerHand(q)
+                console.log("4", playerHand)
+            }
+            // let player1SelectedValue = document.getElementById('player1-select').value;
+            // let player2SelectedValue = document.getElementById('player2-select').value;
+            let inputMessage = { "p1": playerHand, "p2": playerHand, };
             if (inputMessage === '') {
                 return;
             }
-
             socket.emit('sendMessage', inputMessage);
-        });
+        }
+
+        );
 
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
