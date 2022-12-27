@@ -109,15 +109,15 @@
         document.getElementById('sendButton').addEventListener('click', () => {
             for (q = 0; q < 2; q++) {
                 var playerHand = getPlayerHand(q)
-                console.log("4", playerHand)
+                // dict形式で送るとき、キーはStringになる
+                let inputMessage = { playerId: q, playerHand, playerHand };
+                socket.emit('sendMessage', inputMessage);
             }
             // let player1SelectedValue = document.getElementById('player1-select').value;
             // let player2SelectedValue = document.getElementById('player2-select').value;
-            let inputMessage = { "p1": playerHand, "p2": playerHand, };
-            if (inputMessage === '') {
-                return;
-            }
-            socket.emit('sendMessage', inputMessage);
+            // if (inputMessage === '') {
+            //     return;
+            // }
         }
 
         );
