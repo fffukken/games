@@ -26,17 +26,19 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
         // handsCheck(message)
-        if (message["playerId"] === 0) {
-            var player0hand = message["playerHand"]
-        } else {
-            var player1hand = message["playerHand"]
+        for (const player of message) {
+            if (player["playerId"] === 0) {
+                var player0hand = player["playerHand"]
+            } else {
+                var player1hand = player["playerHand"]
+            }
         }
         console.log(player0hand, player1hand)
         if (player0hand !== undefined && player1hand !== undefined) {
             var battleResult = battle(player0hand, player1hand)
             console.log(battleResult)
+            io.emit('receiveMessage', battleResult)
         }
-        io.emit('receiveMessage', battleResult)
     })
 });
 

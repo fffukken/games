@@ -107,12 +107,14 @@
             return playerhand
         }
         document.getElementById('sendButton').addEventListener('click', () => {
+            let handsList = []
             for (q = 0; q < 2; q++) {
                 var playerHand = getPlayerHand(q)
                 // dict形式で送るとき、キーはStringになる
                 let inputMessage = { playerId: q, playerHand, playerHand };
-                socket.emit('sendMessage', inputMessage);
+                handsList.push(inputMessage)
             }
+            socket.emit('sendMessage', handsList);
             // let player1SelectedValue = document.getElementById('player1-select').value;
             // let player2SelectedValue = document.getElementById('player2-select').value;
             // if (inputMessage === '') {
