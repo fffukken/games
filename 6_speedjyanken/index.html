@@ -7,92 +7,93 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <title>オープンじゃんけん</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+            border: solid 3px #38b508;
+        }
 
+        .player-hand input[type="radio"] {
+            display: none;
+        }
+
+        .player-hand input[type="radio"]:checked+label img {
+            background: orange;
+        }
+    </style>
 </head>
 
 <body>
     <h1>手札オープンじゃんけんをしましょう</h1>
-    <div id="hands">
+    <div id="player1hands" class="container">
+        <div class="row">
+            <p>プレイヤー１の手札</p>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player11">
+                <label class="player-hand-label" for="player11">
+                    <img src="./img/janken_gu.png" onclick="sendBattle()" value="gu">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player12">
+                <label class="player-hand-label" for="player12">
+                    <img src="./img/janken_choki.png" onclick="sendBattle()" value="choki">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player13" checked>
+                <label class="player-hand-label" for="player13">
+                    <img src="img/janken_pa.png" onclick="sendBattle()" value="pa">
+                </label>
+            </div>
+        </div>
     </div>
+    <div id="player2hands" class="container">
+        <div class="row">
+            <p>プレイヤー２の手札</p>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player2" id="player21">
+                <label class="player-hand-label" for="player21">
+                    <img src="img/janken_gu.png" onclick="sendBattle()" value="gu">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player2" id="player22">
+                <label class="player-hand-label" for="player22">
+                    <img src="img/janken_choki.png" onclick="sendBattle()" value="choki">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player2" id="player23" checked>
+                <label class="player-hand-label" for="player23">
+                    <img src="img/janken_pa.png" onclick="sendBattle()" value="pa">
+                </label>
+            </div>
+        </div>
+    </div>
+
     <input id="sendButton" type="submit">
     <ol id="messageList" />
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const createPlayer = (p) => {
-            console.log("start creating players")
 
-            // // ラジオボタンの大枠を作る
-            // let divElm = document.createElement("div");
-            // divElm.className = "form-check"
-            // divElm.id = "form-check" + String(p)
-
-            let pElm = document.createElement("p")
-            pElm.innerHTML = "player" + String(p)
-            // divElm.appendChild(pElm)
-            bodyElm = document.getElementById("hands")
-            bodyElm.appendChild(pElm)
+        function sendBattle() {
+            handsList = createHandsList()
+            socket.emit('sendMessage', handsList);
         }
 
-        const createHands = (p, i) => {
-            console.log("start creating hands")
-            // ラジオボタンの大枠を作る
-            let divElm = document.createElement("div");
-            divElm.className = "form-check"
-            divElm.id = "form-check" + String(p)
-
-            // getElementByIdとgetElementsByClassNameでは取得する戻り値の型が違う
-            // Idー＞1つの要素、classname -> 複数のElements
-            // https://www.wakuwakubank.com/posts/306-javascript-dom/
-            // let divElm = document.getElementById("form-check" + String(p))
-
-            // インプットのまるぽちを作る
-            let inputElm = document.createElement("input")
-            inputElm.className = "form-check-input"
-            inputElm.type = "radio"
-            if (i === 1) { inputElm.checked = true }
-            // inputElm.name = "player1hand"
-            // TODO: playerの作成は変数にする
-            inputElm.name = "player" + String(p) + "hand"
-            inputElm.id = "flexRadioDefault" + String(i)
-
-            let handslist = ["ぐー", "ちょき", "ぱー"]
-            let thisWord = String(handslist[Math.floor(Math.random() * handslist.length)])
-            // valueの項目をサーバー側へ送る
-            inputElm.setAttribute("value", thisWord)
-
-            // 表示する文字を作る
-            let labelElm = document.createElement("label")
-            labelElm.className = "form-check-label"
-            // handslistからランダムに表示
-            labelElm.innerHTML = thisWord
-            labelElm.setAttribute("for", "flexRadioDefault" + String(i))
-
-            console.log(divElm)
-            // getElementsByClassNameとかで取得したDOM要素に直接appendChildは出来ない。
-            divElm.appendChild(inputElm)
-            divElm.appendChild(labelElm)
-
-            bodyElm = document.getElementById("hands")
-            bodyElm.appendChild(divElm)
-        }
-
-        // プレイヤーは0,1の2人
-        for (let p = 0; p < 2; p++) {
-            createPlayer(p)
-            // プレイヤーあたり、3つの手を与える
-            for (let i = 0; i < 3; i++) {
-                createHands(p, i)
+        function createHandsList() {
+            let handsList = []
+            for (player = 0; player < 2; player++) {
+                var playerHand = getPlayerHand(player)
+                // dict形式で送るとき、キーはStringになる
+                let inputMessage = { playerId: player, playerHand: playerHand };
+                handsList.push(inputMessage)
             }
-        }
-
-        const addMessageList = (message) => {
-            const ol = document.getElementById('messageList');
-            const li = document.createElement('li');
-            const text = document.createTextNode(message);
-            li.appendChild(text);
-            ol.appendChild(li);
+            return handsList
         }
         function getPlayerHand(playerId) {
             // ラジオボタンは同じName属性がついたものをすべて取得
@@ -106,23 +107,17 @@
             }
             return playerhand
         }
-        document.getElementById('sendButton').addEventListener('click', () => {
-            let handsList = []
-            for (q = 0; q < 2; q++) {
-                var playerHand = getPlayerHand(q)
-                // dict形式で送るとき、キーはStringになる
-                let inputMessage = { playerId: q, playerHand, playerHand };
-                handsList.push(inputMessage)
-            }
-            socket.emit('sendMessage', handsList);
-            // let player1SelectedValue = document.getElementById('player1-select').value;
-            // let player2SelectedValue = document.getElementById('player2-select').value;
-            // if (inputMessage === '') {
-            //     return;
-            // }
+        const addMessageList = (message) => {
+            const ol = document.getElementById('messageList');
+            const li = document.createElement('li');
+            const text = document.createTextNode(message);
+            li.appendChild(text);
+            ol.appendChild(li);
         }
-
-        );
+        // document.getElementById('').addEventListener('click', () => {
+        //     sendBattle()
+        // }
+        // );
 
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
