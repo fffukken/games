@@ -48,11 +48,11 @@ io.on('connection', (socket) => {
 function battle(player0hand, player1hand) {
     if (player0hand === player1hand) {
         return "hikiwake"
-    } else if (player0hand === "ぱー" && player1hand === "ぐー") {
+    } else if (player0hand === "pa" && player1hand === "gu") {
         return "player0 win"
-    } else if (player0hand === "ぐー" && player1hand === "ちょき") {
+    } else if (player0hand === "gu" && player1hand === "choki") {
         return "player0 win"
-    } else if (player0hand === "ちょき" && player1hand === "ぱー") {
+    } else if (player0hand === "choki" && player1hand === "pa") {
         return "player0 win"
     } else {
         return "player1 win"

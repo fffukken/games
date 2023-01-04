@@ -26,48 +26,54 @@
 
 <body>
     <h1>手札オープンじゃんけんをしましょう</h1>
-    <div id="player1hands" class="container">
+    <div id="player0hands" class="container">
         <div class="row">
             <p>プレイヤー１の手札</p>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player1" id="player11">
-                <label class="player-hand-label" for="player11">
-                    <img src="./img/janken_gu.png" onclick="sendBattle()" value="gu">
+                <input class="player-hand-input" type="radio" name="player0" id="player01" value="gu" checked
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player01">
+                    <img src="./img/janken_gu.png">
                 </label>
             </div>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player1" id="player12">
-                <label class="player-hand-label" for="player12">
-                    <img src="./img/janken_choki.png" onclick="sendBattle()" value="choki">
+                <input class="player-hand-input" type="radio" name="player0" id="player02" value="choki"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player02">
+                    <img src="./img/janken_choki.png">
                 </label>
             </div>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player1" id="player13" checked>
-                <label class="player-hand-label" for="player13">
-                    <img src="img/janken_pa.png" onclick="sendBattle()" value="pa">
+                <input class="player-hand-input" type="radio" name="player0" id="player03" value="pa"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player03">
+                    <img src="img/janken_pa.png">
                 </label>
             </div>
         </div>
     </div>
-    <div id="player2hands" class="container">
+    <div id="player1hands" class="container">
         <div class="row">
             <p>プレイヤー２の手札</p>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player2" id="player21">
-                <label class="player-hand-label" for="player21">
-                    <img src="img/janken_gu.png" onclick="sendBattle()" value="gu">
+                <input class="player-hand-input" type="radio" name="player1" id="player11" value="gu" checked
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player11">
+                    <img src="img/janken_gu.png">
                 </label>
             </div>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player2" id="player22">
-                <label class="player-hand-label" for="player22">
-                    <img src="img/janken_choki.png" onclick="sendBattle()" value="choki">
+                <input class="player-hand-input" type="radio" name="player1" id="player12" value="choki"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player12">
+                    <img src="img/janken_choki.png">
                 </label>
             </div>
             <div class="player-hand">
-                <input class="player-hand-input" type="radio" name="player2" id="player23" checked>
-                <label class="player-hand-label" for="player23">
-                    <img src="img/janken_pa.png" onclick="sendBattle()" value="pa">
+                <input class="player-hand-input" type="radio" name="player1" id="player13" value="pa"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player13">
+                    <img src="img/janken_pa.png">
                 </label>
             </div>
         </div>
@@ -81,31 +87,32 @@
         const socket = io();
 
         function sendBattle() {
+            console.log("start battle")
             handsList = createHandsList()
             socket.emit('sendMessage', handsList);
         }
 
         function createHandsList() {
             let handsList = []
-            for (player = 0; player < 2; player++) {
-                var playerHand = getPlayerHand(player)
+            for (playerId = 0; playerId < 2; playerId++) {
+                var playerHand = getPlayerHand(playerId)
                 // dict形式で送るとき、キーはStringになる
-                let inputMessage = { playerId: player, playerHand: playerHand };
+                let inputMessage = { playerId: playerId, playerHand: playerHand };
                 handsList.push(inputMessage)
             }
             return handsList
         }
         function getPlayerHand(playerId) {
             // ラジオボタンは同じName属性がついたものをすべて取得
-            let playerhands = document.getElementsByName("player" + String(playerId) + "hand")
+            let playerhands = document.getElementsByName("player" + String(playerId))
             // 取得したラジオボタンの中からCheckが着いたものだけ取得
             // checkがついたものをplayerhandに入れてるけど、for文の後でreturnしたいからvarで定義
             for (let i = 0; i < playerhands.length; i++) {
                 if (playerhands[i].checked) {
-                    var playerhand = playerhands.item(i).value;
+                    const playerhand = playerhands.item(i).value;
+                    return playerhand
                 }
             }
-            return playerhand
         }
         const addMessageList = (message) => {
             const ol = document.getElementById('messageList');
