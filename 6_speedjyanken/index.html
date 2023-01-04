@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <title>オープンじゃんけん</title>
+    <title>連続じゃんけん</title>
     <style>
         img {
             width: 100px;
@@ -25,15 +25,18 @@
 </head>
 
 <body>
-    <h1>手札オープンじゃんけんをしましょう</h1>
+    <h1>連続じゃんけんをしましょう</h1>
     <div id="player0hands" class="container">
         <div class="row">
-            <p>プレイヤー１の手札</p>
+            <p>プレイヤー１の手</p>
             <div class="player-hand">
+                <!-- onclickだと手を変更させた内容が即座に反映されないのでonchangeを使う -->
                 <input class="player-hand-input" type="radio" name="player0" id="player01" value="gu" checked
                     onchange="sendBattle()">
                 <label class="player-hand-label" for="player01">
-                    <img src="./img/janken_gu.png">
+                    <img src="./img/janken_gu.png" onclick="sendBattleOnclick()">
+                    <!-- TODO onchangeで手を変更させない場合でもbattleを発生させたい -->
+                    <!-- <img src="./img/janken_gu.png" onclick="sendBattleOnclick()"> -->
                 </label>
             </div>
             <div class="player-hand">
@@ -54,7 +57,7 @@
     </div>
     <div id="player1hands" class="container">
         <div class="row">
-            <p>プレイヤー２の手札</p>
+            <p>プレイヤー２の手</p>
             <div class="player-hand">
                 <input class="player-hand-input" type="radio" name="player1" id="player11" value="gu" checked
                     onchange="sendBattle()">
@@ -91,6 +94,11 @@
             handsList = createHandsList()
             socket.emit('sendMessage', handsList);
         }
+        // function sendBattleOnclick() {
+        //     console.log("start battle")
+        //     handsList = createHandsList()
+        //     socket.emit('sendMessage', handsList);
+        // }
 
         function createHandsList() {
             let handsList = []
@@ -121,10 +129,6 @@
             li.appendChild(text);
             ol.appendChild(li);
         }
-        // document.getElementById('').addEventListener('click', () => {
-        //     sendBattle()
-        // }
-        // );
 
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
