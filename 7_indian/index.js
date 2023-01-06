@@ -14,7 +14,6 @@ const PORT = 3000;
 
 // ルーティングの設定。'/' にリクエストがあった場合 src/index.html を返す
 app.get('/', (req, res) => {
-    console.log(__dirname)
     res.sendFile(__dirname + '/index.html');
     // res.sendFile(__dirname + '/img/janken_gu.png')
 });
@@ -26,7 +25,8 @@ server.listen(PORT, () => {
 
 io.on('connection', (socket) => {
     console.log('connectedだお');
-
+    console.log(socket.id)
+    io.to(socket.id).emit("token", { token: socket.id });
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
     })

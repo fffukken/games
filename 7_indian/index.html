@@ -13,14 +13,6 @@
             height: 100px;
             border: solid 3px #38b508;
         }
-
-        .player-hand input[type="radio"] {
-            display: none;
-        }
-
-        .player-hand input[type="radio"]:checked+label img {
-            background: orange;
-        }
     </style>
 </head>
 
@@ -49,7 +41,13 @@
         });
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
-        })
+        }
+        );
+        socket.on('token', (message) => {
+            addMessageList(message)
+            console.log(message)
+        }
+        )
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
