@@ -26,7 +26,8 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
     console.log('connectedだお');
     console.log(socket.id)
-    io.to(socket.id).emit("token", { token: socket.id });
+    io.emit("token", { token: socket.id });
+    // io.to(socket.id).emit("token", { token: socket.id });
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
     })

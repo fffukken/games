@@ -8,17 +8,23 @@
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <title>連続じゃんけん</title>
     <style>
-        img {
-            width: 100px;
-            height: 100px;
-            border: solid 3px #38b508;
-        }
     </style>
 </head>
 
 <body>
-    <h1>連続じゃんけんをしましょう</h1>
-    <div id="player0hands" class="container"></div>
+    <h1>インディアンポーカーをしましょう</h1>
+    <div class="container">
+        <div id="cards" class="row"></div>
+    </div>
+    <div class="container">
+        <div id="cards" class="row">
+            <div class="col-2"
+                style="width: 73px; height: 98px; font-size: 72px; line-height: 22px; box-sizing: border-box; border: 2px solid rgb(255, 0, 0);">
+                2</div>
+            <div class="col-2">4</div>
+            <div class="col-2">5</div>
+        </div>
+    </div>
     <input id="sendButton" type="submit">
 
     <ol id="messageList" />
@@ -26,7 +32,24 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-
+        const cards = document.getElementById("cards")
+        function addPlayer(id) {
+            // プレイヤーがブラウザを立ち上げたときの操作
+            // expressサーバからsocket.idを取得 
+            const randomHand = Math.trunc(Math.random() * 13) + 1;
+            const div = document.createElement("div");
+            div.className = "col-2"
+            div.id = id;
+            div.style.width = "73px";
+            div.style.height = "98px";
+            // div.style.position = "absolute";
+            div.style.fontSize = "72px";
+            div.style.lineHeight = "22px";
+            div.style.boxSizing = "border-box";
+            div.style.border = "2px solid #f00";
+            div.innerHTML = String(randomHand)
+            cards.appendChild(div)
+        };
         const addMessageList = (message) => {
             const ol = document.getElementById('messageList');
             const li = document.createElement('li');
@@ -37,7 +60,6 @@
         document.getElementById('sendButton').addEventListener('click', () => {
             console.log("send")
             socket.emit('sendMessage', "aiueo");
-
         });
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
@@ -45,7 +67,8 @@
         );
         socket.on('token', (message) => {
             addMessageList(message)
-            console.log(message)
+            console.log(message["token"])
+            addPlayer(message["token"])
         }
         )
     </script>
