@@ -1,0 +1,148 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>連続じゃんけん</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+            border: solid 3px #38b508;
+        }
+
+        .player-hand input[type="radio"] {
+            display: none;
+        }
+
+        .player-hand input[type="radio"]:checked+label img {
+            background: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>連続じゃんけんをしましょう</h1>
+    <div id="player0hands" class="container">
+        <div class="row">
+            <p>プレイヤー１の手</p>
+            <div class="player-hand">
+                <!-- onclickだと手を変更させた内容が即座に反映されないのでonchangeを使う -->
+                <input class="player-hand-input" type="radio" name="player0" id="player01" value="gu" checked
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player01">
+                    <img src="./img/janken_gu.png" onclick="sendBattleOnclick()">
+                    <!-- TODO onchangeで手を変更させない場合でもbattleを発生させたい -->
+                    <!-- <img src="./img/janken_gu.png" onclick="sendBattleOnclick()"> -->
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player0" id="player02" value="choki"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player02">
+                    <img src="./img/janken_choki.png">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player0" id="player03" value="pa"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player03">
+                    <img src="img/janken_pa.png">
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="player1hands" class="container">
+        <div class="row">
+            <p>プレイヤー２の手</p>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player11" value="gu" checked
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player11">
+                    <img src="img/janken_gu.png">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player12" value="choki"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player12">
+                    <img src="img/janken_choki.png">
+                </label>
+            </div>
+            <div class="player-hand">
+                <input class="player-hand-input" type="radio" name="player1" id="player13" value="pa"
+                    onchange="sendBattle()">
+                <label class="player-hand-label" for="player13">
+                    <img src="img/janken_pa.png">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <input id="sendButton" type="submit">
+    <ol id="messageList" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function sendBattle() {
+            console.log("start battle")
+            handsList = createHandsList()
+            socket.emit('sendMessage', handsList);
+        }
+        // function sendBattleOnclick() {
+        //     console.log("start battle")
+        //     handsList = createHandsList()
+        //     socket.emit('sendMessage', handsList);
+        // }
+
+        function createHandsList() {
+            let handsList = []
+            for (playerId = 0; playerId < 2; playerId++) {
+                var playerHand = getPlayerHand(playerId)
+                // dict形式で送るとき、キーはStringになる
+                let inputMessage = { playerId: playerId, playerHand: playerHand };
+                handsList.push(inputMessage)
+            }
+            return handsList
+        }
+        function getPlayerHand(playerId) {
+            // ラジオボタンは同じName属性がついたものをすべて取得
+            let playerhands = document.getElementsByName("player" + String(playerId))
+            // 取得したラジオボタンの中からCheckが着いたものだけ取得
+            // checkがついたものをplayerhandに入れてるけど、for文の後でreturnしたいからvarで定義
+            for (let i = 0; i < playerhands.length; i++) {
+                if (playerhands[i].checked) {
+                    const playerhand = playerhands.item(i).value;
+                    return playerhand
+                }
+            }
+        }
+        const addMessageList = (message) => {
+            const ol = document.getElementById('messageList');
+            const li = document.createElement('li');
+            const text = document.createTextNode(message);
+            li.appendChild(text);
+            ol.appendChild(li);
+        }
+
+        socket.on('receiveMessage', (message) => {
+            addMessageList(message)
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
