@@ -26,7 +26,8 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
     console.log('connectedだお');
     console.log(socket.id)
-    io.emit("token", { token: socket.id });
+    const randomHand = Math.trunc(Math.random() * 13) + 1;
+    io.emit("token", { token: socket.id, hand: randomHand });
     // io.to(socket.id).emit("token", { token: socket.id });
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
