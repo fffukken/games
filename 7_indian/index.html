@@ -24,9 +24,15 @@
     <script>
         const socket = io();
         const cards = document.getElementById("cards")
+        function clearCards() {
+            // まずまっさらにする
+            while (cards.lastChild) {
+                cards.removeChild(cards.lastChild);
+            }
+        }
         function addPlayer(id, randomHand) {
-            // プレイヤーがブラウザを立ち上げたときの操作
-            // expressサーバからsocket.idを取得 
+
+            // 全プレイヤーのハンドを取得して描画
             const div = document.createElement("div");
             div.className = "col-2"
             div.id = id;
@@ -60,10 +66,19 @@
         socket.on('token', (message) => {
             addMessageList(message)
             console.log(message["token"])
-            addPlayer(message["token"], message["hand"])
+            // addPlayer(message["token"], message["hand"])
         }
-        )
-    </script>
+        );
+        socket.on('hands', (message) => {
+            console.log(message)
+            console.log(message.length)
+            clearCards();
+            for (let m of message) {
+                addPlayer(m["token"], m["hand"])
+            }
+            // addPlayer(message["token"], message["hand"])
+        }
+        );    </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

@@ -23,12 +23,25 @@ server.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
 });
 
+let playerHands = [];
+
+const createPlayerHands = (token) => {
+    const randomHand = Math.trunc(Math.random() * 13) + 1;
+    playerHands.push({ "token": token, "hand": randomHand })
+    if (playerHands.length > 5) {
+        clearHands()
+    }
+}
+
+const clearHands = () => {
+    playerHands = [];
+}
+
 io.on('connection', (socket) => {
     console.log('connectedだお');
-    console.log(socket.id)
-    const randomHand = Math.trunc(Math.random() * 13) + 1;
-    io.emit("token", { token: socket.id, hand: randomHand });
-    // io.to(socket.id).emit("token", { token: socket.id });
+    io.to(socket.id).emit("token", { token: socket.id });
+    createPlayerHands(socket.id);
+    io.emit("hands", playerHands);
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
     })
