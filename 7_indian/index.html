@@ -24,6 +24,7 @@
     <script>
         const socket = io();
         const cards = document.getElementById("cards")
+        let myToken = ""
         function clearCards() {
             // まずまっさらにする
             while (cards.lastChild) {
@@ -31,7 +32,6 @@
             }
         }
         function addPlayer(id, randomHand) {
-
             // 全プレイヤーのハンドを取得して描画
             const div = document.createElement("div");
             div.className = "col-2"
@@ -48,6 +48,20 @@
             div.innerHTML = String(randomHand)
             cards.appendChild(div)
         };
+        function invisibleOpponentHands() {
+            console.log(cards);
+            console.log(cards.children[0].id);
+            for (let i = 0; i < cards.childElementCount; i++) {
+                console.log(cards.children[i].id)
+                let opponentCardId = cards.children[i].id;
+                if (myToken !== opponentCardId) {
+                    let opponentCard = document.getElementById(opponentCardId)
+                    opponentCard.innerHTML = "?";
+                }
+            }
+
+        };
+
         const addMessageList = (message) => {
             const ol = document.getElementById('messageList');
             const li = document.createElement('li');
@@ -66,6 +80,7 @@
         socket.on('token', (message) => {
             addMessageList(message)
             console.log(message["token"])
+            myToken = message["token"]
             // addPlayer(message["token"], message["hand"])
         }
         );
@@ -73,12 +88,20 @@
             console.log(message)
             console.log(message.length)
             clearCards();
+            // 全員のカードを配置
             for (let m of message) {
                 addPlayer(m["token"], m["hand"])
             }
+            // 自分以外のカードを非表示
+            invisibleOpponentHands();
             // addPlayer(message["token"], message["hand"])
         }
-        );    </script>
+        );
+        socket.on('reload', () => {
+            location.reload()
+        }
+        );
+    </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
