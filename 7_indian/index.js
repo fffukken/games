@@ -24,17 +24,23 @@ server.listen(PORT, () => {
 });
 
 let playerHands = [];
+let message = "";
 
 const createPlayerHands = (token) => {
     const randomHand = Math.trunc(Math.random() * 13) + 1;
     playerHands.push({ "token": token, "hand": randomHand })
     if (playerHands.length > 5) {
         clearHands()
+        message += "ブラウザをリロードしてください"
     }
 }
 
 const clearHands = () => {
     playerHands = [];
+    //TODO： プレイヤー数をいい感じに調整したい
+
+    io.emit("reload", "");
+
 }
 
 io.on('connection', (socket) => {
