@@ -43,6 +43,7 @@ const clearHands = () => {
 
 }
 
+
 io.on('connection', (socket) => {
     console.log('connectedだお');
     io.to(socket.id).emit("token", { token: socket.id });
@@ -50,6 +51,11 @@ io.on('connection', (socket) => {
     io.emit("hands", playerHands);
     socket.on('sendMessage', (message) => {
         console.log('message has been sent:: ', message)
-    })
+    });
+    socket.on('requestShowHands', () => {
+        console.log('showhand ');
+        io.emit("showHands", playerHands);
+    });
+
 });
 

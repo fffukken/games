@@ -16,9 +16,8 @@
     <div class="container">
         <div id="cards" class="row"></div>
     </div>
-    <input id="sendButton" type="submit">
-
-    <ol id="messageList" />
+    <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
+    <!-- <ol id="messageList" /> -->
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -44,20 +43,28 @@
             div.style.boxSizing = "border-box";
             div.style.border = "2px solid #f00";
             div.style.textAlign = "center";
-            div.style.padding = "30px 0"
-            div.innerHTML = String(randomHand)
+            div.style.padding = "30px 0";
+            div.textContent = String(randomHand)
             cards.appendChild(div)
         };
         function invisibleOpponentHands() {
-            console.log(cards);
-            console.log(cards.children[0].id);
+            // expressサーバから取得した後に隠す
             for (let i = 0; i < cards.childElementCount; i++) {
                 console.log(cards.children[i].id)
                 let opponentCardId = cards.children[i].id;
                 if (myToken !== opponentCardId) {
                     let opponentCard = document.getElementById(opponentCardId)
-                    opponentCard.innerHTML = "?";
+                    opponentCard.textContent = "?";
                 }
+            }
+
+        };
+        function showOpponentHands(hands) {
+            for (let i = 0; i < cards.childElementCount; i++) {
+                let opponentCardId = cards.children[i].id;
+                let opponentCard = document.getElementById(opponentCardId)
+                console.log(opponentCard, opponentCardId)
+                opponentCard.textContent = hands[i].hand;
             }
 
         };
@@ -69,24 +76,28 @@
             li.appendChild(text);
             ol.appendChild(li);
         }
-        document.getElementById('sendButton').addEventListener('click', () => {
-            console.log("send")
-            socket.emit('sendMessage', "aiueo");
+        document.getElementById('show').addEventListener('click', () => {
+            console.log("show");
+            socket.emit('requestShowHands', () => {
+                // showOpponentHands(hands)
+            });
         });
+        socket.on('showHands', (playerHands) => {
+            console.log("showopp", playerHands)
+            showOpponentHands(playerHands)
+        }
+        );
         socket.on('receiveMessage', (message) => {
             addMessageList(message)
         }
         );
         socket.on('token', (message) => {
             addMessageList(message)
-            console.log(message["token"])
             myToken = message["token"]
             // addPlayer(message["token"], message["hand"])
         }
         );
         socket.on('hands', (message) => {
-            console.log(message)
-            console.log(message.length)
             clearCards();
             // 全員のカードを配置
             for (let m of message) {
