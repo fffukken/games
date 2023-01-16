@@ -1,0 +1,115 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>インディアンポーカー</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <h1>インディアンポーカーをしましょう</h1>
+    <div class="container">
+        <div id="cards" class="row"></div>
+    </div>
+    <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const cards = document.getElementById("cards")
+        let myToken = ""
+        function clearCards() {
+            // まずまっさらにする
+            while (cards.lastChild) {
+                cards.removeChild(cards.lastChild);
+            }
+        }
+        function addPlayer(id, randomHand) {
+            // 全プレイヤーのハンドを取得して描画
+            const div = document.createElement("div");
+            div.className = "col-2"
+            div.id = id;
+            div.style.width = "73px";
+            div.style.height = "98px";
+            // div.style.position = "absolute";
+            div.style.fontSize = "72px";
+            div.style.lineHeight = "22px";
+            div.style.boxSizing = "border-box";
+            div.style.border = "2px solid #f00";
+            div.style.textAlign = "center";
+            div.style.padding = "30px 0";
+            div.textContent = String(randomHand)
+            cards.appendChild(div)
+        };
+        function invisibleOpponentHands() {
+            // expressサーバから取得した後に隠す
+            for (let i = 0; i < cards.childElementCount; i++) {
+                console.log(cards.children[i].id)
+                let opponentCardId = cards.children[i].id;
+                if (myToken !== opponentCardId) {
+                    let opponentCard = document.getElementById(opponentCardId)
+                    opponentCard.textContent = "?";
+                }
+            }
+
+        };
+        function showOpponentHands(hands) {
+            for (let i = 0; i < cards.childElementCount; i++) {
+                let opponentCardId = cards.children[i].id;
+                let opponentCard = document.getElementById(opponentCardId)
+                console.log(opponentCard, opponentCardId)
+                opponentCard.textContent = hands[i].hand;
+            }
+
+        };
+
+        // TODO: サーバに手札を呼ぶのではなく、ローカルだけで処理したい
+        document.getElementById('show').addEventListener('click', () => {
+            console.log("show");
+            socket.emit('requestShowHands', () => {
+            });
+        });
+        socket.on('showHands', (playerHands) => {
+            console.log("showopp", playerHands)
+            showOpponentHands(playerHands)
+        }
+        );
+
+        socket.on('token', (message) => {
+            addMessageList(message)
+            myToken = message["token"]
+        }
+        );
+        socket.on('hands', (message) => {
+            clearCards();
+            // 全員のカードを配置
+            for (let m of message) {
+                addPlayer(m["token"], m["hand"])
+            }
+            // 自分以外のカードを非表示
+            invisibleOpponentHands();
+        }
+        );
+        // 手札枚数増えたときにやり直す際のエラー対応。苦肉の策なのでどうにかしたい
+        socket.on('reload', () => {
+            location.reload()
+        }
+        );
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
