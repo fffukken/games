@@ -15,7 +15,6 @@ const PORT = 3000;
 // ルーティングの設定。'/' にリクエストがあった場合 src/index.html を返す
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
-    // res.sendFile(__dirname + '/img/janken_gu.png')
 });
 
 // 3000番ポートでHTTPサーバーを起動
@@ -45,13 +44,15 @@ const clearHands = () => {
 
 
 io.on('connection', (socket) => {
-    console.log('connectedだお');
+    console.log('connected');
+    // 特定のプレイヤーにだけ、自分のIDを渡す
     io.to(socket.id).emit("token", { token: socket.id });
+
+    // 全員に手札を渡し、HTML側で自分以外の手を非表示にする
     createPlayerHands(socket.id);
     io.emit("hands", playerHands);
-    socket.on('sendMessage', (message) => {
-        console.log('message has been sent:: ', message)
-    });
+
+    // 手札公開の際に改めて全プレイヤーの手札を送る。けど、この通信はなくせる気がする。
     socket.on('requestShowHands', () => {
         console.log('showhand ');
         io.emit("showHands", playerHands);

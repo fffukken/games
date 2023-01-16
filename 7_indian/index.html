@@ -17,7 +17,6 @@
         <div id="cards" class="row"></div>
     </div>
     <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
-    <!-- <ol id="messageList" /> -->
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -69,17 +68,10 @@
 
         };
 
-        const addMessageList = (message) => {
-            const ol = document.getElementById('messageList');
-            const li = document.createElement('li');
-            const text = document.createTextNode(message);
-            li.appendChild(text);
-            ol.appendChild(li);
-        }
+        // TODO: サーバに手札を呼ぶのではなく、ローカルだけで処理したい
         document.getElementById('show').addEventListener('click', () => {
             console.log("show");
             socket.emit('requestShowHands', () => {
-                // showOpponentHands(hands)
             });
         });
         socket.on('showHands', (playerHands) => {
@@ -87,14 +79,10 @@
             showOpponentHands(playerHands)
         }
         );
-        socket.on('receiveMessage', (message) => {
-            addMessageList(message)
-        }
-        );
+
         socket.on('token', (message) => {
             addMessageList(message)
             myToken = message["token"]
-            // addPlayer(message["token"], message["hand"])
         }
         );
         socket.on('hands', (message) => {
@@ -105,9 +93,9 @@
             }
             // 自分以外のカードを非表示
             invisibleOpponentHands();
-            // addPlayer(message["token"], message["hand"])
         }
         );
+        // 手札枚数増えたときにやり直す際のエラー対応。苦肉の策なのでどうにかしたい
         socket.on('reload', () => {
             location.reload()
         }
