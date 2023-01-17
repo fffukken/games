@@ -12,28 +12,37 @@
 </head>
 
 <body>
-    <h1>インディアンポーカーをしましょう</h1>
+    <h1>E-cardをしましょう</h1>
     <div class="container">
-        <div id="cards" class="row"></div>
+        <div>
+            <button type="button" class="btn btn-dark">Emperor</button>
+            <button type="button" class="btn btn-dark">Slave</button>
+
+        </div>
+        <div id="emperor-cards" class="row"></div>
+        <div id="battle-field" class="row" style="height: 100px; background-color: blue;"></div>
+        <div id="slave-cards" class="row"></div>
     </div>
     <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const cards = document.getElementById("cards")
-        let myToken = ""
+        const emperorCards = document.getElementById("emperor-cards")
+        const slaveCards = document.getElementById("slave-cards")
+        let myRole = "" //emperor / slave
+
         function clearCards() {
             // まずまっさらにする
-            while (cards.lastChild) {
-                cards.removeChild(cards.lastChild);
-            }
+            // while (cards.lastChild) {
+            //     cards.removeChild(cards.lastChild);
+            // }
         }
-        function addPlayer(id, randomHand) {
+        function addCard(card, position) {
             // 全プレイヤーのハンドを取得して描画
             const div = document.createElement("div");
             div.className = "col-2"
-            div.id = id;
+            // div.id = id;
             div.style.width = "73px";
             div.style.height = "98px";
             // div.style.position = "absolute";
@@ -43,8 +52,8 @@
             div.style.border = "2px solid #f00";
             div.style.textAlign = "center";
             div.style.padding = "30px 0";
-            div.textContent = String(randomHand)
-            cards.appendChild(div)
+            div.textContent = String(card)
+            position.appendChild(div)
         };
         function invisibleOpponentHands() {
             // expressサーバから取得した後に隠す
@@ -65,7 +74,6 @@
                 console.log(opponentCard, opponentCardId)
                 opponentCard.textContent = hands[i].hand;
             }
-
         };
 
         // TODO: サーバに手札を呼ぶのではなく、ローカルだけで処理したい
@@ -87,12 +95,21 @@
         );
         socket.on('hands', (message) => {
             clearCards();
+            console.log(message)
+            console.log(message[0])
+
             // 全員のカードを配置
-            for (let m of message) {
-                addPlayer(m["token"], m["hand"])
+            for (let card of message[0]["emperorHand"]) {
+                console.log(card)
+                addCard(card, emperorCards)
             }
-            // 自分以外のカードを非表示
-            invisibleOpponentHands();
+            for (let card of message[0]["slaveHand"]) {
+                console.log(card)
+                addCard(card, slaveCards)
+            }
+            // addCard(m["token"], m["hand"])
+            // // 自分以外のカードを非表示
+            // invisibleOpponentHands();
         }
         );
         // 手札枚数増えたときにやり直す際のエラー対応。苦肉の策なのでどうにかしたい
