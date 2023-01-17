@@ -1,0 +1,42 @@
+<html>
+
+<body>
+    <h1>しりとりしましょう！</h1>
+    <input id="inputText" type="text">
+    <input id="sendButton" type="submit">
+    <ol id="messageList" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const clearText = () => {
+            document.getElementById('inputText').value = '';
+        }
+
+        const addMessageList = (message) => {
+            const ol = document.getElementById('messageList');
+            const li = document.createElement('li');
+            const text = document.createTextNode(message);
+            li.appendChild(text);
+            ol.appendChild(li);
+        }
+
+        document.getElementById('sendButton').addEventListener('click', () => {
+            let inputMessage = document.getElementById('inputText').value;
+
+            if (inputMessage === '') {
+                return;
+            }
+
+            socket.emit('sendMessage', inputMessage);
+            clearText()
+        });
+
+        socket.on('receiveMessage', (message) => {
+            addMessageList(message)
+        })
+    </script>
+</body>
+
+</html>
