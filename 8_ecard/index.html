@@ -8,19 +8,23 @@
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <title>インディアンポーカー</title>
     <style>
+        /* .button {
+
+        } */
     </style>
 </head>
 
 <body>
     <h1>E-cardをしましょう</h1>
     <div class="container">
-        <div id="message" class="h2">皇帝か奴隷を選んでください </div>
+        <div id="game-message" class="h2">皇帝か奴隷を選んでください </div>
+        <div id="server-message" class="h2">皇帝か奴隷を選んでください </div>
 
-        <div id="emperor-cards" class="row"><button type="button" class="btn btn-dark col-2"
+        <div id="emperor-cards" class="row"><button type="button" class="btn btn-dark col-2" id="emperor-button"
                 onclick="selectRole('emperor')">Emperor</button></div>
         <div id="battle-field" class="row" style="height: 100px; background-color: blue;"></div>
 
-        <div id="slave-cards" class="row"><button type="button" class="btn btn-dark col-2"
+        <div id="slave-cards" class="row"><button type="button" class="btn btn-dark col-2" id="slave-button"
                 onclick="selectRole('emperor')">Slave</button></div>
     </div>
     <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
@@ -31,10 +35,16 @@
         const emperorCards = document.getElementById("emperor-cards")
         const slaveCards = document.getElementById("slave-cards")
         let myRole = "" //emperor / slave
+        let myToken = "" // as user name
         function selectRole(role) {
             myRole = role;
             socket.emit('sendMyRole', (myRole) => {
             });
+            const emperorButton = document.getElementById("emperor-button")
+            emperorButton.setAttribute("disabled", true)
+            const slaveButton = document.getElementById("slave-button")
+            slaveButton.setAttribute("disabled", true)
+
         }
         function clearCards() {
             // まずまっさらにする
@@ -91,10 +101,28 @@
             showOpponentHands(playerHands)
         }
         );
+        socket.on('players', (message) => {
+            console.log(message)
+            let serverMessage = document.getElementById("server-message");
+            if (serverMessage === "requestDisconnect") {
+                console.log("disco")
+                socket.disconnect();
+            }
 
+            serverMessage.textContent = message
+
+        }
+        );
         socket.on('token', (message) => {
-            addMessageList(message)
+            // addMessageList(message)
             myToken = message["token"]
+        }
+        );
+        socket.on('role', (message) => {
+            // addMessageList(message)
+            myRole = message["role"];
+            console.log(message)
+            console.log("myroke", myRole)
         }
         );
         socket.on('hands', (message) => {

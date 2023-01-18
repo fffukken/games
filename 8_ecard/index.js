@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 
 const socketIo = require('socket.io');
+const { isTypedArray } = require('util/types');
 
 const app = express();
 // 使用する画像ファイルをexpressサーバに追加
@@ -39,23 +40,43 @@ const shuffle = ([...array]) => {
 
 const createPlayerHands = () => {
     playerHands = [{ "emperorHand": shuffle(emperorHands), "slaveHand": shuffle(slaveHands) }]
+    // playerHands = [{ "emperorHand": shuffle(emperorHands), "slaveHand": shuffle(slaveHands) }]
 }
-
-// const clearHands = () => {
-//     playerHands = [];
-//     //TODO： プレイヤー数をいい感じに調整したい
-//     io.emit("reload", "");
-// }
 
 
 io.on('connection', (socket) => {
     console.log('connected');
     // 特定のプレイヤーにだけ、自分のIDを渡す
-    // io.to(socket.id).emit("token", { token: socket.id });
+    io.to(socket.id).emit("token", { token: socket.id });
 
-    // 全員に手札を渡し、HTML側で自分以外の手を非表示にする
-    createPlayerHands(socket.id);
-    io.emit("hands", playerHands);
+    // 接続数を確認
+    console.log("接続数", socket.client.conn.server.clientsCount)
+    let connectionCount = socket.client.conn.server.clientsCount;
+
+    if (connectionCount === 1) {
+        io.emit("players", "wait 1 player")
+    } else if (connectionCount === 2) {
+        io.emit("players", "gamestart")
+        // 全員に手札を渡し、HTML側で自分以外の手を非表示にする
+        socket.on('sendMyRole', (myRole) => {
+            createPlayerHands(socket.id);
+            io.emit("hands", playerHands);
+            io.to(socket.id).emit("role", myRole);
+            if (myRole === "emperor") {
+                socket.broadcast.emit("role", "slave")
+            } else {
+                socket.broadcast.emit("role", "emperor")
+
+            }
+
+
+        })
+    } else {
+        io.emit("players", "requestDisconnect")
+    }
+    console.log("接続数disco?", socket.client.conn.server.clientsCount)
+
+
 
     // 手札公開の際に改めて全プレイヤーの手札を送る。けど、この通信はなくせる気がする。
     // socket.on('requestShowHands', () => {
