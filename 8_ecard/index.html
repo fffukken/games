@@ -25,7 +25,7 @@
         <div id="battle-field" class="row" style="height: 100px; background-color: blue;"></div>
 
         <div id="slave-cards" class="row"><button type="button" class="btn btn-dark col-2" id="slave-button"
-                onclick="selectRole('emperor')">Slave</button></div>
+                onclick="selectRole('slave')">Slave</button></div>
     </div>
     <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
 
@@ -38,13 +38,15 @@
         let myToken = "" // as user name
         function selectRole(role) {
             myRole = role;
-            socket.emit('sendMyRole', (myRole) => {
-            });
+            console.log("send", myRole)
+            socket.emit('sendMyRole', myRole);
+            disableButton()
+        }
+        const disableButton = () => {
             const emperorButton = document.getElementById("emperor-button")
             emperorButton.setAttribute("disabled", true)
             const slaveButton = document.getElementById("slave-button")
             slaveButton.setAttribute("disabled", true)
-
         }
         function clearCards() {
             // まずまっさらにする
@@ -71,12 +73,23 @@
         };
         function invisibleOpponentHands() {
             // expressサーバから取得した後に隠す
-            for (let i = 0; i < cards.childElementCount; i++) {
-                console.log(cards.children[i].id)
-                let opponentCardId = cards.children[i].id;
-                if (myToken !== opponentCardId) {
-                    let opponentCard = document.getElementById(opponentCardId)
-                    opponentCard.textContent = "?";
+            if (myRole === "slave") {
+                for (let i = 0; i < emperorCards.childElementCount; i++) {
+                    let opponentCard = emperorCards.children[i];
+                    // console.log(opponentCard)
+                    if (opponentCard.type === "button") {
+                        continue;
+                    }
+                    opponentCard.innerHTML = "?";
+                }
+            } else {
+                for (let i = 0; i < slaveCards.childElementCount; i++) {
+                    let opponentCard = slaveCards.children[i];
+                    // console.log(opponentCard)
+                    if (opponentCard.type === "button") {
+                        continue;
+                    }
+                    opponentCard.innerHTML = "?";
                 }
             }
 
@@ -85,32 +98,25 @@
             for (let i = 0; i < cards.childElementCount; i++) {
                 let opponentCardId = cards.children[i].id;
                 let opponentCard = document.getElementById(opponentCardId)
-                console.log(opponentCard, opponentCardId)
                 opponentCard.textContent = hands[i].hand;
             }
         };
 
         // TODO: サーバに手札を呼ぶのではなく、ローカルだけで処理したい
         document.getElementById('show').addEventListener('click', () => {
-            console.log("show");
             socket.emit('requestShowHands', () => {
             });
         });
         socket.on('showHands', (playerHands) => {
-            console.log("showopp", playerHands)
             showOpponentHands(playerHands)
         }
         );
         socket.on('players', (message) => {
-            console.log(message)
             let serverMessage = document.getElementById("server-message");
             if (serverMessage === "requestDisconnect") {
-                console.log("disco")
                 socket.disconnect();
             }
-
             serverMessage.textContent = message
-
         }
         );
         socket.on('token', (message) => {
@@ -120,28 +126,24 @@
         );
         socket.on('role', (message) => {
             // addMessageList(message)
-            myRole = message["role"];
-            console.log(message)
-            console.log("myroke", myRole)
+            myRole = message;
+            disableButton();
+            console.log(myRole)
         }
         );
         socket.on('hands', (message) => {
             clearCards();
-            console.log(message)
-            console.log(message[0])
 
             // 全員のカードを配置
             for (let card of message[0]["emperorHand"]) {
-                console.log(card)
                 addCard(card, emperorCards)
             }
             for (let card of message[0]["slaveHand"]) {
-                console.log(card)
                 addCard(card, slaveCards)
             }
             // addCard(m["token"], m["hand"])
             // // 自分以外のカードを非表示
-            // invisibleOpponentHands();
+            invisibleOpponentHands();
         }
         );
         // 手札枚数増えたときにやり直す際のエラー対応。苦肉の策なのでどうにかしたい
