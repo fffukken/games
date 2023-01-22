@@ -38,7 +38,6 @@
 
         function selectRole(role) {
             myRole = role;
-            console.log("send", myRole)
             socket.emit('sendMyRole', myRole);
             disableButton()
         }
@@ -71,7 +70,7 @@
             if (myRole === "slave") {
                 for (let i = 0; i < emperorCards.childElementCount; i++) {
                     let opponentCard = emperorCards.children[i];
-                    // console.log(opponentCard)
+
                     if (opponentCard.type === "button") {
                         continue;
                     }
@@ -119,7 +118,6 @@
             // addMessageList(message)
             myRole = message;
             disableButton();
-            console.log(myRole)
         }
         );
         socket.on('hands', (message) => {

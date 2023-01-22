@@ -60,14 +60,14 @@ io.on('connection', (socket) => {
         // 全員に手札を渡し、HTML側で自分以外の手を非表示にする
         socket.on('sendMyRole', (myRole) => {
             createPlayerHands(socket.id);
-            io.emit("hands", playerHands);
             io.to(socket.id).emit("role", myRole);
             if (myRole === "emperor") {
+                // 自分以外（相手）にRoleを送る
                 socket.broadcast.emit("role", "slave")
             } else {
                 socket.broadcast.emit("role", "emperor")
-
             }
+            io.emit("hands", playerHands);
 
 
         })
