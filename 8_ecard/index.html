@@ -1,0 +1,155 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>インディアンポーカー</title>
+    <style>
+        /* .button {
+
+        } */
+    </style>
+</head>
+
+<body>
+    <h1>E-cardをしましょう</h1>
+    <div class="container">
+        <div id="game-message" class="h2">皇帝か奴隷を選んでください </div>
+        <div id="server-message" class="h2">皇帝か奴隷を選んでください </div>
+
+        <div id="emperor-cards" class="row"><button type="button" class="btn btn-dark col-2" id="emperor-button"
+                onclick="selectRole('emperor')">Emperor</button></div>
+        <div id="battle-field" class="row" style="height: 100px; background-color: blue;"></div>
+
+        <div id="slave-cards" class="row"><button type="button" class="btn btn-dark col-2" id="slave-button"
+                onclick="selectRole('slave')">Slave</button></div>
+    </div>
+    <button type="button" class="btn btn-dark" id="show">全員の手札をオープン！</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const emperorCards = document.getElementById("emperor-cards")
+        const slaveCards = document.getElementById("slave-cards")
+        let myRole = "" //emperor / slave
+
+        function selectRole(role) {
+            myRole = role;
+            socket.emit('sendMyRole', myRole);
+            disableButton()
+        }
+        const disableButton = () => {
+            const emperorButton = document.getElementById("emperor-button")
+            emperorButton.setAttribute("disabled", true)
+            const slaveButton = document.getElementById("slave-button")
+            slaveButton.setAttribute("disabled", true)
+        }
+
+        function addCard(card, position) {
+            // 全プレイヤーのハンドを取得して描画
+            const div = document.createElement("div");
+            div.className = "col-2"
+            // div.id = id;
+            div.style.width = "73px";
+            div.style.height = "98px";
+            div.style.position = "relative";
+            div.style.fontSize = "72px";
+            div.style.lineHeight = "22px";
+            div.style.boxSizing = "border-box";
+            div.style.border = "2px solid #f00";
+            div.style.textAlign = "center";
+            div.style.padding = "30px 0";
+            div.textContent = String(card)
+            position.appendChild(div)
+        };
+        function invisibleOpponentHands() {
+            // expressサーバから取得した後に隠す
+            if (myRole === "slave") {
+                for (let i = 0; i < emperorCards.childElementCount; i++) {
+                    let opponentCard = emperorCards.children[i];
+
+                    if (opponentCard.type === "button") {
+                        continue;
+                    }
+                    opponentCard.innerHTML = "?";
+                }
+            } else {
+                for (let i = 0; i < slaveCards.childElementCount; i++) {
+                    let opponentCard = slaveCards.children[i];
+                    // console.log(opponentCard)
+                    if (opponentCard.type === "button") {
+                        continue;
+                    }
+                    opponentCard.innerHTML = "?";
+                }
+            }
+
+        };
+        // function showOpponentHands(hands) {
+        //     for (let i = 0; i < cards.childElementCount; i++) {
+        //         let opponentCardId = cards.children[i].id;
+        //         let opponentCard = document.getElementById(opponentCardId)
+        //         opponentCard.textContent = hands[i].hand;
+        //     }
+        // };
+
+        // TODO: サーバに手札を呼ぶのではなく、ローカルだけで処理したい
+        // document.getElementById('show').addEventListener('click', () => {
+        //     socket.emit('requestShowHands', () => {
+        //     });
+        // });
+        // socket.on('showHands', (playerHands) => {
+        //     showOpponentHands(playerHands)
+        // }
+        // );
+        socket.on('players', (message) => {
+            let serverMessage = document.getElementById("server-message");
+            if (serverMessage === "requestDisconnect") {
+                socket.disconnect();
+            }
+            serverMessage.textContent = message
+        }
+        );
+
+        socket.on('role', (message) => {
+            // addMessageList(message)
+            myRole = message;
+            disableButton();
+        }
+        );
+        socket.on('hands', (message) => {
+
+
+            // 全員のカードを配置
+            for (let card of message[0]["emperorHand"]) {
+                addCard(card, emperorCards)
+            }
+            for (let card of message[0]["slaveHand"]) {
+                addCard(card, slaveCards)
+            }
+            // addCard(m["token"], m["hand"])
+            // // 自分以外のカードを非表示
+            invisibleOpponentHands();
+        }
+        );
+        // 手札枚数増えたときにやり直す際のエラー対応。苦肉の策なのでどうにかしたい
+        socket.on('reload', () => {
+            location.reload()
+        }
+        );
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
