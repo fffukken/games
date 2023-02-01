@@ -1,7 +1,9 @@
 const board = []
-const xNos = 4;
-const yNos = 4;
-
+const xNos = 3;
+const yNos = 3;
+let level = 0;
+let isGameover = false;
+let isAnimation = false;
 
 const init = () => {
     const container = document.createElement("div");
@@ -11,9 +13,9 @@ const init = () => {
 
     message.textContent = "すべての赤パネルを青にしよう！"
 
-    for (let y = 0; y < yNos; y++) {
+    for (let y = 0; y < yNos + level; y++) {
         board[y] = [];
-        for (let x = 0; x < xNos; x++) {
+        for (let x = 0; x < xNos + level; x++) {
             const panel = document.createElement("div");
             panel.style.position = `absolute`;
             panel.style.left = `${x * 100 + 2}px`;
@@ -35,9 +37,8 @@ const init = () => {
     }
 }
 
-let isAnimation = false;
 const flip = async (x, y) => {
-    if (x < 0 || y < 0 || x >= xNos || y >= yNos) {
+    if (x < 0 || y < 0 || x >= xNos + level || y >= yNos + level) {
         return;
     }
     isAnimation = true;
@@ -61,7 +62,19 @@ const flip = async (x, y) => {
     isAnimation = false;
 }
 
-let isGameover = false;
+
+const gameover = async () => {
+    console.log("gameover")
+    let message = document.getElementById("message")
+    message.textContent = "クリア！！";
+    await new Promise(r => setTimeout(r, 1500));
+    level += 1;
+    message.textContent = "すべての赤パネルを青にしよう！"
+
+    // TODO:container要素を消去する
+    init();
+    isGameover = false;
+}
 
 
 const ondown = (x, y) => {
@@ -79,9 +92,7 @@ const ondown = (x, y) => {
 
     isGameover = board.flat().every((v) => v.color === 1);
     if (isGameover) {
-        console.log("gameover")
-        let message = document.getElementById("message")
-        message.textContent = "クリア！！";
+        gameover();
     }
 }
 
