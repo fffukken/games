@@ -1,10 +1,13 @@
 const board = []
-const xNos = 4;
-const yNos = 4;
+const xNos = 5;
+const yNos = 5;
 let level = 0;
 let isGameover = false;
 let isAnimation = false;
 let isAuto = false;
+
+// TODO:ソルバー作ってみる
+// http://algopro.html.xdomain.jp/sflguide/sfl_g2/algo2.html
 
 const init = () => {
     // const container = document.createElement("div");
