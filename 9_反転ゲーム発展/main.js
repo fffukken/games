@@ -111,6 +111,25 @@ function autoAnswer() {
 
 }
 
+function autoAnswer2() {
+    isAuto = true;
+    for (let y = 1; y < yNos; y++) {
+        for (let x = 0; x < xNos; x++) {
+            // const panel = board[y][x].panel;
+            // let color = board[y][x].color;
+            const upPanel = board[y - 1][x].panel;
+            let upColor = board[y - 1][x].color;
+            if (upColor === 0) {
+                ondown(x, y)
+            }
+        }
+    }
+
+    isAuto = false;
+
+}
+
+
 const gameover = async () => {
     console.log("gameover")
     let message = document.getElementById("message")
