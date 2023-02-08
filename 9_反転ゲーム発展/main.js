@@ -18,7 +18,11 @@ const init = () => {
     document.body.appendChild(container);
 
     message.textContent = "すべての赤パネルを青にしよう！"
+    createPanels(container)
 
+}
+
+const createPanels = (container) => {
     for (let y = 0; y < yNos; y++) {
         board[y] = [];
         for (let x = 0; x < xNos; x++) {
@@ -73,6 +77,7 @@ const flip = async (x, y) => {
 }
 
 const randomTap = async () => {
+    // ランダムにどこかをクリックして、それをたくさん繰り返せばいずれ正解になる、という荒業
     await new Promise(r => setTimeout(r, 500));
     tapY = Math.trunc(Math.random() * xNos);
     tapX = Math.trunc(Math.random() * yNos);
@@ -98,7 +103,7 @@ const clearPanels = () => {
 }
 
 function autoAnswer() {
-    console.log("machine start")
+    // ランダムにどこかをタップするのを繰り返す。アニメーションなし
     isAuto = true;
     for (let i = 0; i < 1000; i++) {
         randomTap()
@@ -107,16 +112,13 @@ function autoAnswer() {
     //     randomTap()
     // }
     isAuto = false;
-    // console.log("resolved")
-
 }
 
 function autoAnswer2() {
     isAuto = true;
     for (let y = 1; y < yNos; y++) {
         for (let x = 0; x < xNos; x++) {
-            // const panel = board[y][x].panel;
-            // let color = board[y][x].color;
+            // 1つ上のパネルが赤なら、パネルをクリックする（そして1つ上のパネルを青にする）
             const upPanel = board[y - 1][x].panel;
             let upColor = board[y - 1][x].color;
             if (upColor === 0) {
@@ -124,9 +126,56 @@ function autoAnswer2() {
             }
         }
     }
-
     isAuto = false;
+}
 
+const showAnswers = () => {
+    let answerContainer = document.createElement("answerContainer");
+    document.body.appendChild(answerContainer);
+
+    for (let topX = 0; topX < xNos; topX++) {
+        let answerBoard = []
+        let div = document.createElement("div")
+        answerContainer.appendChild(div);
+        div.style.border = `4px solid`;
+        div.style.height = `500px`;
+        div.style.width = `500px`;
+        div.style.left = `500px`;
+        div.style.top = `500px`;
+        div.style.position = "relative"
+        // for (let y = 0; y < yNos; y++) {
+        //     answerBoard[y] = [];
+        //     for (let x = 0; x < xNos; x++) {
+        //         console.log(topX, x, y)
+        //         const panel = document.createElement("div");
+        //         panel.style.position = `absolute`;
+        //         panel.style.left = `${x * 100 + 2}px`;
+        //         panel.style.top = `${y * 100 + 20 + (topX + 1) * xNos * 100}px`;
+        //         panel.style.width = `96px`;
+        //         panel.style.height = `96px`;
+        //         panel.style.backgroundColor = `#ff0`;
+        //         panel.style.borderRadius = `10px`;
+
+        //         panel.style.transition = `all 150ms linear`;
+        //         answerContainer.appendChild(panel);
+
+        //         answerBoard[y][x] = { panel, color: 0 };
+        //     }
+        // }
+        // for (let c0 = 0; c0 <= 1; c0++) {
+        //     for (let c1 = 0; c1 <= 1; c1++) {
+        //         for (let c2 = 0; c2 <= 1; c2++) {
+        //             for (let c3 = 0; c3 <= 1; c3++) {
+        //                 for (let c4 = 0; c4 <= 1; c4++) {
+        //                     let div = document.createElement("div")
+        //                     answerContainer.appendChild(div);
+        //                     createPanels(div)
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+    }
 }
 
 
