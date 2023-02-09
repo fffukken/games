@@ -1,6 +1,9 @@
 const board = []
 const xNos = 5;
 const yNos = 5;
+const panelWidth = 100;
+const panelHeight = 100;
+
 let level = 0;
 let isGameover = false;
 let isAnimation = false;
@@ -29,10 +32,10 @@ const createPanels = (container) => {
             // console.log(x, y)
             const panel = document.createElement("div");
             panel.style.position = `absolute`;
-            panel.style.left = `${x * 100 + 2}px`;
-            panel.style.top = `${y * 100 + 20}px`;
-            panel.style.width = `96px`;
-            panel.style.height = `96px`;
+            panel.style.left = `${x * (panelWidth + 4) + 2}px`;
+            panel.style.top = `${y * (panelWidth + 4) + 20}px`;
+            panel.style.width = `${panelWidth}px`;
+            panel.style.height = `${panelHeight}px`;
             panel.style.backgroundColor = `#f00`;
             panel.style.borderRadius = `10px`;
 
@@ -138,30 +141,30 @@ const showAnswers = () => {
         let div = document.createElement("div")
         answerContainer.appendChild(div);
         div.style.border = `4px solid`;
-        div.style.height = `500px`;
-        div.style.width = `500px`;
-        div.style.left = `500px`;
-        div.style.top = `500px`;
+        div.style.height = `${(panelHeight + 4) * yNos}px`;
+        div.style.width = `${(panelWidth + 4) * xNos}px`;
+        // div.style.left = `500px`;
+        div.style.top = `${(panelHeight + 4) * yNos * (topX + 1)}px`;
         div.style.position = "relative"
-        // for (let y = 0; y < yNos; y++) {
-        //     answerBoard[y] = [];
-        //     for (let x = 0; x < xNos; x++) {
-        //         console.log(topX, x, y)
-        //         const panel = document.createElement("div");
-        //         panel.style.position = `absolute`;
-        //         panel.style.left = `${x * 100 + 2}px`;
-        //         panel.style.top = `${y * 100 + 20 + (topX + 1) * xNos * 100}px`;
-        //         panel.style.width = `96px`;
-        //         panel.style.height = `96px`;
-        //         panel.style.backgroundColor = `#ff0`;
-        //         panel.style.borderRadius = `10px`;
+        for (let y = 0; y < yNos; y++) {
+            answerBoard[y] = [];
+            for (let x = 0; x < xNos; x++) {
+                console.log(topX, x, y)
+                const panel = document.createElement("div");
+                panel.style.position = `absolute`;
+                panel.style.left = `${x * (panelWidth + 4) + 2}px`;
+                panel.style.top = `${(panelHeight + 4) * yNos * (topX + 1) + y * (panelWidth + 4) + 20}px`;
+                panel.style.width = `96px`;
+                panel.style.height = `96px`;
+                panel.style.backgroundColor = `#ff0`;
+                panel.style.borderRadius = `10px`;
 
-        //         panel.style.transition = `all 150ms linear`;
-        //         answerContainer.appendChild(panel);
+                panel.style.transition = `all 150ms linear`;
+                answerContainer.appendChild(panel);
 
-        //         answerBoard[y][x] = { panel, color: 0 };
-        //     }
-        // }
+                answerBoard[y][x] = { panel, color: 0 };
+            }
+        }
         // for (let c0 = 0; c0 <= 1; c0++) {
         //     for (let c1 = 0; c1 <= 1; c1++) {
         //         for (let c2 = 0; c2 <= 1; c2++) {
