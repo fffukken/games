@@ -145,7 +145,8 @@ const showAnswers = () => {
         div.style.height = `${(panelHeight + 4) * yNos}px`;
         div.style.width = `${(panelWidth + 4) * xNos}px`;
         // div.style.left = `500px`;
-        // 枠線の開始位置はパネルの高さ x パネル数 x 枠線の数（回答用のデフォルトのがあるので+1)
+        // 枠線の開始位置はパネルの高さ x パネル数 x 枠線の数（回答用のデフォルトのがあるので+1)でposition: absoluteを使う
+        // または、position: relativeにしてパネルの高さ（＋自動で位置調整してくれる分）だけで調整する
         div.style.top = `${(panelHeight + 4) * yNos * (topX + 1) + 20}px`;
         div.style.position = "absolute"
         for (let y = 0; y < yNos; y++) {
