@@ -1,8 +1,8 @@
 const board = []
 const xNos = 5;
 const yNos = 5;
-const panelWidth = 100;
-const panelHeight = 100;
+const panelWidth = 96;
+const panelHeight = 96;
 
 let level = 0;
 let isGameover = false;
@@ -16,7 +16,7 @@ const init = () => {
     // const container = document.createElement("div");
     let container = document.getElementById("panels")
     let message = document.getElementById("message")
-    // container.style.position = "relative";
+    container.style.position = "absolute";
     // container.id = "panels"
     document.body.appendChild(container);
 
@@ -141,15 +141,16 @@ const showAnswers = () => {
         let div = document.createElement("div")
         answerContainer.appendChild(div);
         div.style.border = `4px solid`;
+        console.log(panelHeight, yNos, xNos, topX, (panelHeight + 4) * yNos, (panelHeight + 4) * yNos * (topX + 1))
         div.style.height = `${(panelHeight + 4) * yNos}px`;
         div.style.width = `${(panelWidth + 4) * xNos}px`;
         // div.style.left = `500px`;
-        div.style.top = `${(panelHeight + 4) * yNos * (topX + 1)}px`;
-        div.style.position = "relative"
+        // 枠線の開始位置はパネルの高さ x パネル数 x 枠線の数（回答用のデフォルトのがあるので+1)
+        div.style.top = `${(panelHeight + 4) * yNos * (topX + 1) + 20}px`;
+        div.style.position = "absolute"
         for (let y = 0; y < yNos; y++) {
             answerBoard[y] = [];
             for (let x = 0; x < xNos; x++) {
-                console.log(topX, x, y)
                 const panel = document.createElement("div");
                 panel.style.position = `absolute`;
                 panel.style.left = `${x * (panelWidth + 4) + 2}px`;
