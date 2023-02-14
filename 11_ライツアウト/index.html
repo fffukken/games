@@ -55,21 +55,23 @@
             let state = board[row][col];
             cell.innerHTML = state ? 0 : 1;
             board[row][col] = state ? 0 : 1;
-
-            const ROW_OFFSETS = [-1, 0, 1, 0];
-            const COL_OFFSETS = [0, -1, 0, 1];
-            for (let i = 0; i < ROW_OFFSETS.length; i++) {
-                let r = row + ROW_OFFSETS[i];
-                let c = col + COL_OFFSETS[i];
-                if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
-                    let neighbor = document.getElementById("board").rows[r].cells[c];
-                    let neighborState = board[r][c];
-                    neighbor.innerHTML = neighborState ? 0 : 1;
-                    board[r][c] = neighborState ? 0 : 1;
-                    if (board[r][c] === 1) {
-                        neighbor.classList.add("on");
-                    } else {
-                        neighbor.classList.remove("on");
+            if (state === 1) {
+                cell.classList.remove("on");
+            } else {
+                cell.classList.add("on");
+            }
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (Math.abs(row - r) + Math.abs(col - c) === 1) {
+                        let adjacentCell = document.getElementById("board").rows[r].cells[c];
+                        let adjacentState = board[r][c];
+                        adjacentCell.innerHTML = adjacentState ? 0 : 1;
+                        board[r][c] = adjacentState ? 0 : 1;
+                        if (adjacentState === 1) {
+                            adjacentCell.classList.remove("on");
+                        } else {
+                            adjacentCell.classList.add("on");
+                        }
                     }
                 }
             }
