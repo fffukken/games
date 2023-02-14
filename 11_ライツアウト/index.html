@@ -55,6 +55,11 @@
             let state = board[row][col];
             cell.innerHTML = state ? 0 : 1;
             board[row][col] = state ? 0 : 1;
+            if (state === 1) {
+                cell.classList.remove("on");
+            } else {
+                cell.classList.add("on");
+            }
             if (row > 0) {
                 let top = document.getElementById("board").rows[row - 1].cells[col];
                 top.innerHTML = board[row - 1][col] ? 0 : 1;
@@ -87,7 +92,7 @@
             }
             if (col < COLS - 1) {
                 let right = document.getElementById("board").rows[row].cells[col + 1];
-                right.innerHTML = board[row][col + 1]
+                right.innerHTML = board[row][col + 1] ? 0 : 1;
                 board[row][col + 1] = board[row][col + 1] ? 0 : 1;
                 if (board[row][col + 1] === 1) {
                     right.classList.add("on");
