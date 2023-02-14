@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lights Out</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lights Out</h1>
+    <table id="board"></table>
+    <script>
+        const ROWS = 5;
+        const COLS = 5;
+        let board = [];
+        function createBoard() {
+            let table = document.getElementById("board");
+            for (let i = 0; i < ROWS; i++) {
+                let row = table.insertRow();
+                board.push([]);
+                for (let j = 0; j < COLS; j++) {
+                    let cell = row.insertCell();
+                    cell.onclick = function () {
+                        toggle(i, j);
+                    };
+                    let state = Math.random() < 0.5 ? 0 : 1;
+                    cell.innerHTML = state;
+                    board[i].push(state);
+                }
+            }
+        }
+        function toggle(row, col) {
+            let cell = document.getElementById("board").rows[row].cells[col];
+            let state = board[row][col];
+            cell.innerHTML = state ? 0 : 1;
+            board[row][col] = state ? 0 : 1;
+            if (row > 0) {
+                let top = document.getElementById("board").rows[row - 1].cells[col];
+                top.innerHTML = board[row - 1][col] ? 0 : 1;
+                board[row - 1][col] = board[row - 1][col] ? 0 : 1;
+            }
+            if (row < ROWS - 1) {
+                let bottom = document.getElementById("board").rows[row + 1].cells[col];
+                bottom.innerHTML = board[row + 1][col] ? 0 : 1;
+                board[row + 1][col] = board[row + 1][col] ? 0 : 1;
+            }
+            if (col > 0) {
+                let left = document.getElementById("board").rows[row].cells[col - 1];
+                left.innerHTML = board[row][col - 1] ? 0 : 1;
+                board[row][col - 1] = board[row][col - 1] ? 0 : 1;
+            }
+            if (col < COLS - 1) {
+                let right = document.getElementById("board").rows[row].cells[col + 1];
+                right.innerHTML = board[row][col + 1] ? 0 : 1;
+                board[row][col + 1] = board[row][col + 1] ? 0 : 1;
+            }
+        }
+        createBoard();
+    </script>
+</body>
+
+</html>
