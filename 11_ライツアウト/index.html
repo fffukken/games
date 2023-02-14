@@ -55,49 +55,22 @@
             let state = board[row][col];
             cell.innerHTML = state ? 0 : 1;
             board[row][col] = state ? 0 : 1;
-            if (state === 1) {
-                cell.classList.remove("on");
-            } else {
-                cell.classList.add("on");
-            }
-            if (row > 0) {
-                let top = document.getElementById("board").rows[row - 1].cells[col];
-                top.innerHTML = board[row - 1][col] ? 0 : 1;
-                board[row - 1][col] = board[row - 1][col] ? 0 : 1;
-                if (board[row - 1][col] === 1) {
-                    top.classList.add("on");
-                } else {
-                    top.classList.remove("on");
-                }
-            }
-            if (row < ROWS - 1) {
-                let bottom = document.getElementById("board").rows[row + 1].cells[col];
-                bottom.innerHTML = board[row + 1][col] ? 0 : 1;
-                board[row + 1][col] = board[row + 1][col] ? 0 : 1;
-                if (board[row + 1][col] === 1) {
-                    bottom.classList.add("on");
-                } else {
-                    bottom.classList.remove("on");
-                }
-            }
-            if (col > 0) {
-                let left = document.getElementById("board").rows[row].cells[col - 1];
-                left.innerHTML = board[row][col - 1] ? 0 : 1;
-                board[row][col - 1] = board[row][col - 1] ? 0 : 1;
-                if (board[row][col - 1] === 1) {
-                    left.classList.add("on");
-                } else {
-                    left.classList.remove("on");
-                }
-            }
-            if (col < COLS - 1) {
-                let right = document.getElementById("board").rows[row].cells[col + 1];
-                right.innerHTML = board[row][col + 1] ? 0 : 1;
-                board[row][col + 1] = board[row][col + 1] ? 0 : 1;
-                if (board[row][col + 1] === 1) {
-                    right.classList.add("on");
-                } else {
-                    right.classList.remove("on");
+
+            const ROW_OFFSETS = [-1, 0, 1, 0];
+            const COL_OFFSETS = [0, -1, 0, 1];
+            for (let i = 0; i < ROW_OFFSETS.length; i++) {
+                let r = row + ROW_OFFSETS[i];
+                let c = col + COL_OFFSETS[i];
+                if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
+                    let neighbor = document.getElementById("board").rows[r].cells[c];
+                    let neighborState = board[r][c];
+                    neighbor.innerHTML = neighborState ? 0 : 1;
+                    board[r][c] = neighborState ? 0 : 1;
+                    if (board[r][c] === 1) {
+                        neighbor.classList.add("on");
+                    } else {
+                        neighbor.classList.remove("on");
+                    }
                 }
             }
         }
