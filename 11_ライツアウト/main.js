@@ -59,4 +59,4 @@ function toggle(row, col) {
 }
 
 // create initial board on page load
-createBoard();
+// createBoard();
