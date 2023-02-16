@@ -56,6 +56,24 @@ function toggle(row, col) {
             }
         }
     }
+
+    // check if all lights are off
+    let gameOver = true;
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+            if (board[i][j] === 1) {
+                gameOver = false;
+                break;
+            }
+        }
+        if (!gameOver) {
+            break;
+        }
+    }
+    // display game over message
+    if (gameOver) {
+        alert("Game over! Congratulations!");
+    }
 }
 
 // create initial board on page load
