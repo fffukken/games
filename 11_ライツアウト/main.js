@@ -76,5 +76,43 @@ function toggle(row, col) {
     }
 }
 
+function showAnswer() {
+    // Create a new table to display answer
+    let answerTable = document.createElement("table");
+    answerTable.id = "answer-table";
+    let tableBody = document.createElement("tbody");
+    for (let i = 0; i < ROWS; i++) {
+        let row = document.createElement("tr");
+        for (let j = 0; j < COLS; j++) {
+            let cell = document.createElement("td");
+            cell.innerText = getAnswer(i, j);
+            row.appendChild(cell);
+        }
+        tableBody.appendChild(row);
+    }
+    answerTable.appendChild(tableBody);
+
+    // Insert the answer table into the document
+    let board = document.getElementById("board");
+    board.parentNode.insertBefore(answerTable, board.nextSibling);
+}
+
+function getAnswer(row, col) {
+    let answer = board[row][col];
+    for (let r = -1; r <= 1; r++) {
+        for (let c = -1; c <= 1; c++) {
+            if (r === 0 && c === 0) {
+                continue;
+            }
+            let newRow = row + r;
+            let newCol = col + c;
+            if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+                continue;
+            }
+            answer += board[newRow][newCol];
+        }
+    }
+    return answer % 2;
+}
 // create initial board on page load
 // createBoard();
