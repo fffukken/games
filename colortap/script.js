@@ -9,12 +9,22 @@ let timeRemaining = 30;
 let timer;
 let targetColor;
 
+// Update the generateTargetColor function
 function generateTargetColor() {
     const colors = ['red', 'blue', 'green', 'yellow'];
     targetColor = colors[Math.floor(Math.random() * colors.length)];
-    targetColorDisplay.textContent = targetColor;
-}
 
+    // Set the text content
+    targetColorDisplay.textContent = targetColor;
+
+    // Set a random text color different from the target color
+    let textColor;
+    do {
+        textColor = colors[Math.floor(Math.random() * colors.length)];
+    } while (textColor === targetColor);
+
+    targetColorDisplay.style.color = textColor;
+}
 function tileTapHandler(event) {
     const tappedColor = event.target.id;
     if (tappedColor === targetColor) {
