@@ -54,8 +54,8 @@ body {
     background-color: green;
 }
 
-#yellow::before {
-    background-color: yellow;
+#orange::before {
+    background-color: orange;
 }
 
 #target-color {

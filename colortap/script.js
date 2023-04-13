@@ -11,7 +11,7 @@ let targetColor;
 
 // Update the generateTargetColor function
 function generateTargetColor() {
-    const colors = ['red', 'blue', 'green', 'yellow'];
+    const colors = ['red', 'blue', 'green', 'orange'];
     targetColor = colors[Math.floor(Math.random() * colors.length)];
 
     // Set the text content
