@@ -58,6 +58,22 @@ body {
     background-color: orange;
 }
 
+#black::before {
+    background-color: black;
+}
+
+#yellow::before {
+    background-color: yellow;
+}
+
+#brown::before {
+    background-color: brown;
+}
+
+#purple::before {
+    background-color: purple;
+}
+
 #target-color {
     grid-column: 1 / -1;
     height: 50px;
