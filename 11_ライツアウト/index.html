@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lights Out</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .on {
+            background-color: yellow;
+        }
+    </style>
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <h1>Lights Out</h1>
+    <div>
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" value="5">
+    </div>
+    <div>
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" value="5">
+    </div>
+    <div>
+        <button onclick="createBoard()">Create Board</button>
+    </div>
+    <button id="answerButton" onclick="showAnswer()">Answer</button>
+    <table id="board"></table>
+
+</body>
+
+</html>
+<!-- 修正点は、toggle関数の中でセルの状態を切り替えた後、そのセルが1だった場合に背景色を黄色にするために、classList.add("on")を追加することです。また、セルが0になった場合には、背景色を黄色から取り除くためにclassList.remove("on")を追加しました。 -->
