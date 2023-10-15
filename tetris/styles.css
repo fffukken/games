@@ -1,0 +1,16 @@
+/* styles.css */
+
+/* ゲームボードの背景色 */
+#tetrisCanvas {
+    background-color: gray;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* テトリミノの色 */
+.tetrimino {
+    fill: blue;
+    stroke: black;
+}
