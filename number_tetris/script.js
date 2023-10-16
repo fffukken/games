@@ -39,10 +39,32 @@ function updateScore() {
 }
 
 // Main game loop
+// Main game loop
 function gameLoop() {
-    // Update the game logic here
     // Add code for block generation, movement, addition, and game end conditions
     // Remember to call renderBoard() and updateScore() to update the display
+
+    // Check if the game board is empty (first run)
+    if (board.every(row => row.every(cell => cell === 0)) && score === 0) {
+        // Display the initial block on the game board
+        const initialBlock = generateRandomBlock();
+        const startX = Math.floor(boardWidth / 2); // Start block in the middle
+        const startY = 0; // Start block at the top
+        board[startY][startX] = initialBlock;
+
+        renderBoard();
+        updateScore();
+    }
+
+    // Implement other game logic here
+    // ...
+}
+
+// Generate a random block (2, 4, or 8)
+function generateRandomBlock() {
+    const possibleValues = [2, 4, 8];
+    const randomIndex = Math.floor(Math.random() * possibleValues.length);
+    return possibleValues[randomIndex];
 }
 
 // Start the game
