@@ -27,10 +27,17 @@ function renderBoard() {
             const cell = document.createElement("div");
             cell.className = "cell";
             cell.style.backgroundColor = blockColors[board[row][col]];
+
+            // Display the block value as text
+            if (board[row][col] > 0) {
+                cell.textContent = board[row][col];
+            }
+
             gameBoard.appendChild(cell);
         }
     }
 }
+
 
 // Update the score
 function updateScore() {
