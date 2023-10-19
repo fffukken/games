@@ -74,14 +74,66 @@ function generateRandomBlock() {
     return possibleValues[randomIndex];
 }
 
+// Move the current block down as far as possible
+function moveBlockDown() {
+    let moved = false;
+    console.log("down")
+    // Loop through the rows from the bottom to the top
+    for (let row = boardHeight - 2; row >= 0; row--) {
+        for (let col = 0; col < boardWidth; col++) {
+            if (board[row][col] > 0) {
+                for (let newRow = row + 1; newRow < boardHeight; newRow++) {
+                    if (board[newRow][col] === 0) {
+                        // Move the block down
+                        board[newRow][col] = board[row][col];
+                        board[row][col] = 0;
+                        moved = true;
+                    } else {
+                        break; // Stop when the block encounters another block
+                    }
+                }
+            }
+        }
+    }
+    if (moved) {
+        moveBlockDown();
+    }
+    if (moved) {
+        renderBoard();
+    }
+}
+
+
 // Start the game
 function startGame() {
+    console.log("dg")
     initializeBoard();
     renderBoard();
     updateScore();
     // You can set up event listeners for user input here
     // Example: document.addEventListener("keydown", handleKeyPress);
     setInterval(gameLoop, 1000); // Update the game every second
+// Event listener for ArrowDown key
 }
+
+// キーボード入力を監視
+document.addEventListener("keydown", function (event) {
+    switch (event.key) {
+        case "ArrowLeft":
+            // 左キーが押された場合、テトリミノを左に移動
+            moveTetrimino(-1, 0);
+            break;
+        case "ArrowRight":
+            // 右キーが押された場合、テトリミノを右に移動
+            moveTetrimino(1, 0);
+            break;
+        case "ArrowDown":
+            // 下矢印キーが押された場合、テトリミノを1マス下に移動
+            moveBlockDown();
+            break;
+
+    }
+});
+
 
 startGame();
