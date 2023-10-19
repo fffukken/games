@@ -75,7 +75,8 @@ function generateRandomBlock() {
 }
 // Function to merge and move blocks after moving down
 function mergeAndMoveBlocks() {
-    console.log("mergedmoved")
+    let merged = false;
+
     for (let row = boardHeight - 1; row >= 0; row--) {
         for (let col = 0; col < boardWidth; col++) {
             if (board[row][col] !== 0) {
@@ -83,31 +84,39 @@ function mergeAndMoveBlocks() {
                 if (col < boardWidth - 1 && board[row][col] === board[row][col + 1]) {
                     board[row][col] *= 2;
                     board[row][col + 1] = 0;
+                    merged = true;
                 }
                 // Merge up
                 if (row > 0 && board[row][col] === board[row - 1][col]) {
                     board[row][col] *= 2;
                     board[row - 1][col] = 0;
+                    merged = true;
                 }
             }
         }
     }
 
-    // Move merged blocks down
-    for (let row = boardHeight - 1; row >= 0; row--) {
-        for (let col = 0; col < boardWidth; col++) {
-            if (board[row][col] !== 0) {
-                for (let newRow = row; newRow < boardHeight - 1; newRow++) {
-                    if (board[newRow + 1][col] === 0) {
-                        // Move the block down
-                        board[newRow + 1][col] = board[row][col];
-                        board[row][col] = 0;
+    // If merging has occurred, continue the process recursively
+    if (merged) {
+        mergeAndMoveBlocks(); // Recursively call the function
+    } else {
+        // Move merged blocks down
+        for (let row = boardHeight - 1; row >= 0; row--) {
+            for (let col = 0; col < boardWidth; col++) {
+                if (board[row][col] !== 0) {
+                    for (let newRow = row; newRow < boardHeight - 1; newRow++) {
+                        if (board[newRow + 1][col] === 0) {
+                            // Move the block down
+                            board[newRow + 1][col] = board[row][col];
+                            board[row][col] = 0;
+                        }
                     }
                 }
             }
         }
     }
 }
+
 // Move the current block down as far as possible
 function moveBlockDown() {
     let moved = false;
