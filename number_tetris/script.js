@@ -73,11 +73,45 @@ function generateRandomBlock() {
     const randomIndex = Math.floor(Math.random() * possibleValues.length);
     return possibleValues[randomIndex];
 }
+// Function to merge and move blocks after moving down
+function mergeAndMoveBlocks() {
+    console.log("mergedmoved")
+    for (let row = boardHeight - 1; row >= 0; row--) {
+        for (let col = 0; col < boardWidth; col++) {
+            if (board[row][col] !== 0) {
+                // Merge right
+                if (col < boardWidth - 1 && board[row][col] === board[row][col + 1]) {
+                    board[row][col] *= 2;
+                    board[row][col + 1] = 0;
+                }
+                // Merge up
+                if (row > 0 && board[row][col] === board[row - 1][col]) {
+                    board[row][col] *= 2;
+                    board[row - 1][col] = 0;
+                }
+            }
+        }
+    }
 
+    // Move merged blocks down
+    for (let row = boardHeight - 1; row >= 0; row--) {
+        for (let col = 0; col < boardWidth; col++) {
+            if (board[row][col] !== 0) {
+                for (let newRow = row; newRow < boardHeight - 1; newRow++) {
+                    if (board[newRow + 1][col] === 0) {
+                        // Move the block down
+                        board[newRow + 1][col] = board[row][col];
+                        board[row][col] = 0;
+                    }
+                }
+            }
+        }
+    }
+}
 // Move the current block down as far as possible
 function moveBlockDown() {
     let moved = false;
-    console.log("down")
+
     // Loop through the rows from the bottom to the top
     for (let row = boardHeight - 2; row >= 0; row--) {
         for (let col = 0; col < boardWidth; col++) {
@@ -95,11 +129,12 @@ function moveBlockDown() {
             }
         }
     }
+
+    // If the block hasn't moved down completely, continue moving it down
     if (moved) {
-        moveBlockDown();
-    }
-    if (moved) {
-        renderBoard();
+        requestAnimationFrame(moveBlockDown);
+    } else {
+        mergeAndMoveBlocks();
 
         // Generate a new block after the current block has settled
         const newBlockValue = generateRandomBlock();
