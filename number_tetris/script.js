@@ -100,8 +100,55 @@ function moveBlockDown() {
     }
     if (moved) {
         renderBoard();
+
+        // Generate a new block after the current block has settled
+        const newBlockValue = generateRandomBlock();
+        const startX = Math.floor(boardWidth / 2);
+        board[0][startX] = newBlockValue;
+
+        renderBoard();
     }
 }
+// Move the current block left by one cell
+function moveBlockLeft() {
+    let moved = false;
+
+    for (let row = 0; row < boardHeight; row++) {
+        for (let col = 1; col < boardWidth; col++) {
+            if (board[row][col] > 0 && board[row][col - 1] === 0) {
+                // Move the block left
+                board[row][col - 1] = board[row][col];
+                board[row][col] = 0;
+                moved = true;
+            }
+        }
+    }
+
+    if (moved) {
+        renderBoard();
+    }
+}
+
+// Move the current block right by one cell
+function moveBlockRight() {
+    let moved = false;
+
+    for (let row = 0; row < boardHeight; row++) {
+        for (let col = boardWidth - 2; col >= 0; col--) {
+            if (board[row][col] > 0 && board[row][col + 1] === 0) {
+                // Move the block right
+                board[row][col + 1] = board[row][col];
+                board[row][col] = 0;
+                moved = true;
+            }
+        }
+    }
+
+    if (moved) {
+        renderBoard();
+    }
+}
+
 
 
 // Start the game
@@ -121,11 +168,11 @@ document.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "ArrowLeft":
             // 左キーが押された場合、テトリミノを左に移動
-            moveTetrimino(-1, 0);
+            moveBlockLeft()
             break;
         case "ArrowRight":
             // 右キーが押された場合、テトリミノを右に移動
-            moveTetrimino(1, 0);
+            moveBlockRight()
             break;
         case "ArrowDown":
             // 下矢印キーが押された場合、テトリミノを1マス下に移動
