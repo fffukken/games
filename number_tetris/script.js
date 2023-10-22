@@ -157,7 +157,7 @@ function moveBlockDown() {
 function moveBlockLeft() {
     let moved = false;
 
-    for (let row = 0; row < boardHeight; row++) {
+    for (let row = 0; row < 1; row++) {
         for (let col = 1; col < boardWidth; col++) {
             if (board[row][col] > 0 && board[row][col - 1] === 0) {
                 // Move the block left
@@ -177,7 +177,8 @@ function moveBlockLeft() {
 function moveBlockRight() {
     let moved = false;
 
-    for (let row = 0; row < boardHeight; row++) {
+    // 一番上の列だけ左右に移動させる
+    for (let row = 0; row < 1; row++) {
         for (let col = boardWidth - 2; col >= 0; col--) {
             if (board[row][col] > 0 && board[row][col + 1] === 0) {
                 // Move the block right
