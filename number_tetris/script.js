@@ -73,7 +73,6 @@ function generateRandomBlock() {
     const randomIndex = Math.floor(Math.random() * possibleValues.length);
     return possibleValues[randomIndex];
 }
-// Function to merge and move blocks after moving down
 function mergeAndMoveBlocks() {
     let merged = false;
 
@@ -82,12 +81,16 @@ function mergeAndMoveBlocks() {
             if (board[row][col] !== 0) {
                 // Merge right
                 if (col < boardWidth - 1 && board[row][col] === board[row][col + 1]) {
+                    // マージした数字をスコアに加算
+                    score += board[row][col];
                     board[row][col] *= 2;
                     board[row][col + 1] = 0;
                     merged = true;
                 }
                 // Merge up
                 if (row > 0 && board[row][col] === board[row - 1][col]) {
+                    // マージした数字をスコアに加算
+                    score += board[row][col];
                     board[row][col] *= 2;
                     board[row - 1][col] = 0;
                     merged = true;
@@ -95,6 +98,9 @@ function mergeAndMoveBlocks() {
             }
         }
     }
+
+    // スコアを画面に更新
+    updateScore();
 
     // If merging has occurred, continue the process recursively
     if (merged) {
