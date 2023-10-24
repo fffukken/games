@@ -30,3 +30,19 @@ body {
     font-size: 24px;
     margin-top: 20px;
 }
+
+/* スライドアニメーションの定義 */
+@keyframes slide {
+    from {
+        transform: translateX(0); /* 初期位置 */
+    }
+    to {
+        transform: translateX(100%); /* 移動後の位置（例: 右にスライド） */
+    }
+}
+
+.cell {
+    animation-duration: 0.5s; /* アニメーションの時間 */
+    animation-timing-function: ease; /* イージング関数 */
+    animation-fill-mode: forwards; /* アニメーション終了後に状態を維持 */
+}
