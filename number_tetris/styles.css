@@ -45,4 +45,9 @@ body {
     animation-duration: 0.5s; /* アニメーションの時間 */
     animation-timing-function: ease; /* イージング関数 */
     animation-fill-mode: forwards; /* アニメーション終了後に状態を維持 */
+    display: flex;
+    justify-content: center; /* セル内の内容を中央に配置 */
+    align-items: center; /* セル内の内容を中央に配置 */
+    font-size: 24px; /* タイルのフォントサイズを大きく調整 */
+
 }
