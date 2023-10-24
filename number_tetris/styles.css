@@ -49,5 +49,6 @@ body {
     justify-content: center; /* セル内の内容を中央に配置 */
     align-items: center; /* セル内の内容を中央に配置 */
     font-size: 24px; /* タイルのフォントサイズを大きく調整 */
+    color: #fff;
 
 }

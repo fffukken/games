@@ -26,15 +26,31 @@ function renderBoard() {
         for (let col = 0; col < boardWidth; col++) {
             const cell = document.createElement("div");
             cell.className = "cell";
-            cell.style.backgroundColor = blockColors[board[row][col]];
+
+            // Set the background color based on the value in the board
+            const cellValue = board[row][col];
+            cell.style.backgroundColor = getTileColor(cellValue);
 
             // Display the block value as text
-            if (board[row][col] > 0) {
-                cell.textContent = board[row][col];
+            if (cellValue > 0) {
+                cell.textContent = cellValue;
             }
 
             gameBoard.appendChild(cell);
         }
+    }
+}
+
+// Function to get the tile color based on the cell value
+function getTileColor(cellValue) {
+    if (cellValue === 2) {
+        return "white"; // For value 2, set the background color to white
+    } else if (cellValue >= 1024) {
+        return "red"; // For values 1024 and above, set the background color to red
+    } else if (cellValue > 2) {
+        return "blue"; // For values greater than 2 and less than 1024, set the background color to blue
+    } else {
+        return "transparent"; // Default background color (or any other color you prefer)
     }
 }
 
@@ -233,5 +249,20 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+// Function to get the tile color based on the cell value
+function getTileColor(cellValue) {
+    if (cellValue <= 1024) {
+        // Calculate blue component based on cellValue
+        const blue = (255 / 1024) * cellValue;
+        return `rgb(0, 0, ${blue})`;
+    } else if (cellValue <= 9096) {
+        // Calculate red and green components based on cellValue
+        const red = (255 / 9096) * cellValue;
+        const green = (255 / 9096) * cellValue;
+        return `rgb(${red}, ${green}, 255)`;
+    } else {
+        return "transparent"; // Default background color (or any other color you prefer)
+    }
+}
 
 startGame();
