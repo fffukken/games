@@ -83,12 +83,54 @@ function gameLoop() {
     // ...
 }
 
-// Generate a random block (2, 4, or 8)
-function generateRandomBlock() {
-    const possibleValues = [2, 4, 8];
-    const randomIndex = Math.floor(Math.random() * possibleValues.length);
-    return possibleValues[randomIndex];
+// ボード上にあるすべての数字を取得してリストにする関数
+function getAllValuesOnBoard() {
+    const allValues = [];
+    for (let row = 0; row < boardHeight; row++) {
+        for (let col = 0; col < boardWidth; col++) {
+            const cellValue = board[row][col];
+            if (cellValue > 0) {
+                allValues.push(cellValue);
+            }
+        }
+    }
+    return allValues;
 }
+
+// ボード上のランダムな値を取得
+function getRandomValueFromBoard() {
+    const allValues = getAllValuesOnBoard();
+    if (allValues.length > 0) {
+        const randomIndex = Math.floor(Math.random() * allValues.length);
+        return allValues[randomIndex];
+    } else {
+        // ボード上に数字がない場合のエラーハンドリング
+        console.error("ボード上に数字がありません。");
+        // 代替の値を返すか、エラーを適切に処理します
+        return 0; // 代替の値を返す例
+    }
+}
+
+// Generate a random block (2, 4, or 8)
+let useRandomValue = true; // 初回はランダムな値を使用
+
+function generateRandomBlock() {
+    if (useRandomValue) {
+        const possibleValues = [2, 4, 8];
+        const randomIndex = Math.floor(Math.random() * possibleValues.length);
+        useRandomValue = false; // 次回はボード上の値を使用
+        return possibleValues[randomIndex];
+    } else {
+        // ボード上のランダムな値を取得
+        const allValues = getAllValuesOnBoard();
+        const randomIndex = Math.floor(Math.random() * allValues.length);
+        console.log(allValues, randomIndex)
+        useRandomValue = true; // 次回は再びランダムな値を使用
+        return allValues[randomIndex];
+    }
+}
+
+
 function mergeAndMoveBlocks() {
     let merged = false;
 
