@@ -1,6 +1,6 @@
 // Constants
 const boardWidth = 3;
-const boardHeight = 10;
+const boardHeight = 6;
 const blockColors = ["#FF0000", "#00FF00", "#0000FF"]; // Color for each number (2, 4, 8)
 
 // Game state
@@ -60,8 +60,8 @@ function updateScore() {
     const scoreElement = document.getElementById("score");
     scoreElement.textContent = score;
 }
-
 // Main game loop
+let gameInterval; // ゲームループのインターバルを格納する変数
 // Main game loop
 function gameLoop() {
     // Add code for block generation, movement, addition, and game end conditions
@@ -78,7 +78,14 @@ function gameLoop() {
         renderBoard();
         updateScore();
     }
+    // // Check if the block has reached the top
+    // if (board[boardHeight - 1].some(cell => cell > 0)) {
+    //     // Game over logic here
+    //     alert("Game Over");
+    //     clearInterval(gameInterval); // ゲームループを停止
 
+    //     return;
+    // }
     // Implement other game logic here
     // ...
 }
